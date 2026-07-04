@@ -1602,9 +1602,172 @@ Sets status to `Terminated`. Cannot terminate a completed attachment.
 
 ## Logbooks
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /logbooks | Create draft logbook entry | Yes | Student |
+| GET | /logbooks/my | Get my logbook entries | Yes | Student |
+| GET | /logbooks/attachment/:id | Get entries by attachment | Yes | Admin, Supervisor |
+| GET | /logbooks/:id | Get logbook entry by ID | Yes | Authenticated |
+| PUT | /logbooks/:id | Update draft entry | Yes | Student (owner) |
+| PATCH | /logbooks/:id/submit | Submit entry for approval | Yes | Student (owner) |
+| PATCH | /logbooks/:id/approve | Approve entry | Yes | Supervisor |
+| PATCH | /logbooks/:id/reject | Reject entry with comment | Yes | Supervisor |
+| PATCH | /logbooks/:id/comment | Add supervisor comment | Yes | Supervisor |
+| DELETE | /logbooks/:id | Delete logbook entry | Yes | Admin |
+
+---
+
+### Create Logbook Entry (Draft)
+
+**POST /logbooks**
+
+**Request Body**
+
+```json
+{
+    "attachmentId": "...",
+    "date": "2026-08-15",
+    "activities": "Worked on API endpoints and testing",
+    "hoursWorked": 8,
+    "skillsLearned": "Node.js, Express",
+    "challenges": "Authentication implementation",
+    "solutions": "Implemented JWT-based auth"
+}
 ```
-/logbooks
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Logbook entry created successfully.",
+    "data": {
+        "_id": "...",
+        "attachmentId": {
+            "_id": "...",
+            "opportunityId": { "title": "Software Intern" },
+            "companyId": { "companyName": "Tech Corp" }
+        },
+        "studentId": {
+            "_id": "...",
+            "userId": { "firstName": "John", "lastName": "Doe" }
+        },
+        "date": "2026-08-15T00:00:00.000Z",
+        "activities": "Worked on API endpoints and testing",
+        "hoursWorked": 8,
+        "skillsLearned": "Node.js, Express",
+        "challenges": "Authentication implementation",
+        "solutions": "Implemented JWT-based auth",
+        "status": "Draft",
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
 ```
+
+**Business Rules**
+
+- Student must have an Active attachment
+- Only the attachment owner can create entries
+- Fields: attachmentId (required), date (required), activities (required), hoursWorked (required, 0.5–24)
+
+---
+
+### Get My Logbooks
+
+**GET /logbooks/my** (Student only)
+
+Returns all logbook entries for the authenticated student.
+
+---
+
+### Get Logbooks by Attachment
+
+**GET /logbooks/attachment/:id** (Admin, Supervisor)
+
+Returns all entries for a given attachment.
+
+---
+
+### Get Logbook By ID
+
+**GET /logbooks/:id**
+
+---
+
+### Update Draft Entry
+
+**PUT /logbooks/:id** (Student owner only)
+
+Only editable while status is **Draft**. Returns 400 if already submitted.
+
+---
+
+### Submit Entry
+
+**PATCH /logbooks/:id/submit** (Student owner only)
+
+Changes status to **Submitted**. Emits `logbook.submitted` event.
+
+---
+
+### Approve Entry
+
+**PATCH /logbooks/:id/approve** (Supervisor)
+
+Changes status to **Approved**. Emits `logbook.approved` event.
+
+---
+
+### Reject Entry
+
+**PATCH /logbooks/:id/reject** (Supervisor)
+
+**Request Body**
+
+```json
+{
+    "comment": "Insufficient detail — please elaborate on the technical implementation"
+}
+```
+
+Changes status to **Rejected**.
+
+---
+
+### Add Comment
+
+**PATCH /logbooks/:id/comment** (Supervisor)
+
+**Request Body**
+
+```json
+{
+    "comment": "Good work, include more code examples next time"
+}
+```
+
+Updates `supervisorComment` field without changing status.
+
+---
+
+### Delete Entry
+
+**DELETE /logbooks/:id** (Admin only)
+
+---
+
+### Status Flow
+
+```
+Draft → Submitted → Approved
+                  ↘ Rejected
+```
+
+- Draft: student can edit freely
+- Submitted: locked, pending supervisor review
+- Approved: terminal
+- Rejected: terminal (student must create new entry)
 
 ---
 
