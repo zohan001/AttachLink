@@ -994,8 +994,238 @@ Sets `status: Closed`. Applications can no longer be accepted.
 
 ## Applications
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /applications | Apply to opportunity | Yes | Student |
+| GET | /applications | List all applications | Yes | Admin |
+| GET | /applications/my | My applications | Yes | Student |
+| PATCH | /applications/:id/withdraw | Withdraw application | Yes | Student (owner) |
+| GET | /applications/company | Company's applications | Yes | Company |
+| GET | /applications/company/:opportunityId | Filter by opportunity | Yes | Company |
+| PATCH | /applications/:id/status | Update application status | Yes | Company |
+| DELETE | /applications/:id | Delete application | Yes | Admin |
+
+---
+
+### Apply to Opportunity
+
+**POST /applications**
+
+**Request Body**
+
+```json
+{
+    "opportunityId": "...",
+    "coverLetter": "I am writing to express my strong interest in this position...",
+    "cvUrl": "https://example.com/cv.pdf"
+}
 ```
-/applications
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Application submitted successfully.",
+    "data": {
+        "_id": "...",
+        "studentId": "...",
+        "opportunityId": "...",
+        "companyId": "...",
+        "coverLetter": "...",
+        "status": "Pending",
+        "appliedAt": "...",
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
+```
+
+**Validation Rules**
+
+- opportunityId required, valid MongoID
+- coverLetter required, minimum 50 characters
+- cvUrl optional, must be valid URL
+
+**Business Rules**
+
+- Only students can apply
+- Student profile must exist
+- Opportunity must be Open
+- Deadline must not have passed
+- Cannot apply twice to the same opportunity (unless previous application was Withdrawn)
+
+**Possible Errors**
+
+| Status | Description |
+|--------|-------------|
+| 400 | Validation error / Closed or expired opportunity |
+| 401 | Unauthorized |
+| 403 | Forbidden (non-student) |
+| 404 | Student or opportunity not found |
+| 409 | Already applied |
+| 500 | Internal Server Error |
+
+---
+
+### List All Applications
+
+**GET /applications** (Admin only)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "All applications retrieved successfully.",
+    "data": [...]
+}
+```
+
+---
+
+### My Applications
+
+**GET /applications/my** (Student only)
+
+Returns the authenticated student's applications, most recent first.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Your applications retrieved successfully.",
+    "data": [
+        {
+            "_id": "...",
+            "studentId": {
+                "_id": "...",
+                "userId": {
+                    "_id": "...",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "john@example.com"
+                }
+            },
+            "opportunityId": {
+                "_id": "...",
+                "title": "Software Engineer Intern",
+                "location": "Nairobi",
+                "applicationDeadline": "...",
+                "status": "Open"
+            },
+            "companyId": {
+                "_id": "...",
+                "companyName": "Tech Corp Ltd",
+                "logo": ""
+            },
+            "status": "Under Review",
+            "coverLetter": "...",
+            "appliedAt": "...",
+            "feedback": "",
+            "shortlisted": false
+        }
+    ]
+}
+```
+
+---
+
+### Withdraw Application
+
+**PATCH /applications/:id/withdraw** (Student owner only)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Application withdrawn successfully.",
+    "data": {
+        "status": "Withdrawn",
+        ...
+    }
+}
+```
+
+Cannot withdraw if status is Accepted or Rejected.
+
+---
+
+### Company's Applications
+
+**GET /applications/company** (Company only)
+
+Returns all applications for the authenticated company's opportunities.
+
+**GET /applications/company/:opportunityId** (Company only)
+
+Filter applications by a specific opportunity.
+
+---
+
+### Update Application Status
+
+**PATCH /applications/:id/status** (Company owner only)
+
+**Request Body**
+
+```json
+{
+    "status": "Shortlisted",
+    "feedback": "Great profile, impressive skills"
+}
+```
+
+**Valid Status Flow**
+
+```
+Pending → Under Review → Shortlisted → Interview Scheduled → Accepted
+                          ↘               ↘
+                          Rejected         Rejected
+```
+
+**Allowed Status Values**
+
+| Status | Description |
+|--------|-------------|
+| Under Review | Company is reviewing |
+| Shortlisted | Candidate moved forward |
+| Interview Scheduled | Interview booked |
+| Accepted | Offer given |
+| Rejected | Not moving forward |
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Application status updated to \"Shortlisted\".",
+    "data": {
+        "status": "Shortlisted",
+        "shortlisted": true,
+        "reviewedAt": "...",
+        "reviewedBy": "...",
+        "feedback": "Great profile, impressive skills",
+        ...
+    }
+}
+```
+
+---
+
+### Delete Application
+
+**DELETE /applications/:id** (Admin only)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Application deleted successfully."
+}
 ```
 
 ---

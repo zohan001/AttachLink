@@ -4,6 +4,7 @@ import authRoutes from "../modules/auth/routes/auth.routes.js";
 import studentRoutes from "../modules/students/routes/student.routes.js";
 import companyRoutes from "../modules/companies/routes/company.routes.js";
 import opportunityRoutes from "../modules/opportunities/routes/opportunity.routes.js";
+import applicationRoutes from "../modules/applications/routes/application.routes.js";
 
 const router = Router();
 
@@ -53,5 +54,13 @@ router.use("/companies", companyRoutes);
 */
 
 router.use("/opportunities", opportunityRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Applications
+|--------------------------------------------------------------------------
+*/
+
+router.use("/applications", applicationRoutes);
 
 export default router;

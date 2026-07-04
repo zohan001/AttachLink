@@ -67,4 +67,39 @@
 
 ---
 
+## Application Module
+
+### For Students — Applying
+
+1. Browse open opportunities and find a position.
+2. Apply via `POST /api/v1/applications` with the opportunity ID and a cover letter.
+3. Track your applications: `GET /api/v1/applications/my`
+4. Withdraw an application: `PATCH /api/v1/applications/:id/withdraw`
+
+### Application Status Lifecycle
+
+Your application progresses through these stages:
+
+```
+Pending → Under Review → Shortlisted → Interview Scheduled → Accepted
+                                                            → Rejected
+```
+
+- **Pending** — Submitted, awaiting review.
+- **Under Review** — Company is evaluating your profile.
+- **Shortlisted** — You've been shortlisted for the next stage.
+- **Interview Scheduled** — Interview has been arranged.
+- **Accepted** — Congratulations! You've been accepted.
+- **Rejected** — Not selected for this position.
+- **Withdrawn** — You withdrew your application.
+
+### For Companies — Reviewing Applications
+
+1. View all applicants: `GET /api/v1/applications/company`
+2. Filter by opportunity: `GET /api/v1/applications/company/:opportunityId`
+3. Update status: `PATCH /api/v1/applications/:id/status`
+4. Provide feedback to candidates along with status updates.
+
+---
+
 *More modules will be documented as development continues.*
