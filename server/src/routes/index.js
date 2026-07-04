@@ -9,6 +9,7 @@ import schoolRoutes from "../modules/schools/routes/school.routes.js";
 import supervisorRoutes from "../modules/supervisors/routes/supervisor.routes.js";
 import attachmentRoutes from "../modules/attachments/routes/attachment.routes.js";
 import logbookRoutes from "../modules/logbooks/routes/logbook.routes.js";
+import evaluationRoutes from "../modules/evaluations/routes/evaluation.routes.js";
 
 const router = Router();
 
@@ -98,5 +99,13 @@ router.use("/attachments", attachmentRoutes);
 */
 
 router.use("/logbooks", logbookRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Evaluations
+|--------------------------------------------------------------------------
+*/
+
+router.use("/evaluations", evaluationRoutes);
 
 export default router;

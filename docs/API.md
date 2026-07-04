@@ -1773,9 +1773,117 @@ Draft → Submitted → Approved
 
 ## Evaluations
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /evaluations | Create evaluation draft | Yes | Supervisor |
+| GET | /evaluations/my | Get my evaluations | Yes | Supervisor |
+| GET | /evaluations/attachment/:id | Get evaluations by attachment | Yes | Admin, Supervisor |
+| GET | /evaluations/:id | Get evaluation by ID | Yes | Authenticated |
+| PUT | /evaluations/:id | Update draft | Yes | Supervisor (owner) |
+| PATCH | /evaluations/:id/submit | Submit evaluation | Yes | Supervisor (owner) |
+| DELETE | /evaluations/:id | Delete evaluation | Yes | Admin |
+
+---
+
+### Create Evaluation
+
+**POST /evaluations** (Supervisor)
+
+Can only evaluate an **Active** or **Completed** attachment.
+
+**Request Body**
+
+```json
+{
+    "attachmentId": "...",
+    "criteria": {
+        "punctuality": 5,
+        "technicalSkills": 4,
+        "communication": 4,
+        "teamwork": 5,
+        "problemSolving": 3,
+        "initiative": 4,
+        "qualityOfWork": 4,
+        "attendance": 5
+    },
+    "strengths": "Great team player, punctual",
+    "weaknesses": "Could improve problem-solving",
+    "generalComments": "Overall good performance",
+    "recommendation": "Good"
+}
 ```
-/evaluations
+
+**Criteria (all 1–5, default 3):**
+- punctuality, technicalSkills, communication, teamwork
+- problemSolving, initiative, qualityOfWork, attendance
+
+**Recommendation values:** Excellent, Good, Satisfactory, Needs Improvement, Poor
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Evaluation created successfully.",
+    "data": {
+        "_id": "...",
+        "attachmentId": { ... },
+        "studentId": { ... },
+        "evaluatorId": { ... },
+        "evaluatorType": "academic",
+        "criteria": { ... },
+        "overallScore": 4.3,
+        "strengths": "Great team player, punctual",
+        "weaknesses": "Could improve problem-solving",
+        "generalComments": "Overall good performance",
+        "recommendation": "Good",
+        "status": "Draft",
+        "createdAt": "..."
+    }
+}
 ```
+
+---
+
+### Get My Evaluations
+
+**GET /evaluations/my** (Supervisor only)
+
+Returns evaluations created by the authenticated supervisor.
+
+---
+
+### Get Evaluations by Attachment
+
+**GET /evaluations/attachment/:id** (Admin, Supervisor)
+
+---
+
+### Get Evaluation By ID
+
+**GET /evaluations/:id**
+
+---
+
+### Update Draft
+
+**PUT /evaluations/:id** (Owner only)
+
+Only editable while status is **Draft**. Score automatically recalculated when criteria changes.
+
+---
+
+### Submit Evaluation
+
+**PATCH /evaluations/:id/submit** (Owner only)
+
+Changes status to **Submitted** (locked). Emits `evaluation.submitted` event.
+
+---
+
+### Delete Evaluation
+
+**DELETE /evaluations/:id** (Admin only)
 
 ---
 
