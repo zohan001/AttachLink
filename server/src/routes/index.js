@@ -5,6 +5,7 @@ import studentRoutes from "../modules/students/routes/student.routes.js";
 import companyRoutes from "../modules/companies/routes/company.routes.js";
 import opportunityRoutes from "../modules/opportunities/routes/opportunity.routes.js";
 import applicationRoutes from "../modules/applications/routes/application.routes.js";
+import schoolRoutes from "../modules/schools/routes/school.routes.js";
 
 const router = Router();
 
@@ -62,5 +63,13 @@ router.use("/opportunities", opportunityRoutes);
 */
 
 router.use("/applications", applicationRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Schools
+|--------------------------------------------------------------------------
+*/
+
+router.use("/schools", schoolRoutes);
 
 export default router;

@@ -93,6 +93,24 @@ Pending → Under Review → Shortlisted → Interview Scheduled → Accepted
 - **Rejected** — Not selected for this position.
 - **Withdrawn** — You withdrew your application.
 
+---
+
+## School Module
+
+### Creating a School Profile
+
+1. Register a new account with role `school` via `POST /api/v1/auth/register`.
+2. Create your school profile via `POST /api/v1/schools` with school name, institution type, email, phone, and other details.
+
+### Managing Your Profile
+
+- View your profile: `GET /api/v1/schools/me`
+- Update your profile: `PUT /api/v1/schools/:id`
+
+### Public Access
+
+- Anyone can view school profiles: `GET /api/v1/schools` or `GET /api/v1/schools/:id`
+
 ### For Companies — Reviewing Applications
 
 1. View all applicants: `GET /api/v1/applications/company`

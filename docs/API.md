@@ -716,9 +716,91 @@ Same shape as Get All Companies.
 
 ## Schools
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /schools | Create school profile | Yes | School |
+| GET | /schools | List all schools | No | Public |
+| GET | /schools/me | Get own profile | Yes | School |
+| GET | /schools/:id | Get school by ID | No | Public |
+| PUT | /schools/:id | Update school profile | Yes | Owner, Admin |
+| DELETE | /schools/:id | Delete school profile | Yes | Admin |
+
+---
+
+### Create School Profile
+
+**POST /schools**
+
+**Request Body**
+
+```json
+{
+    "schoolName": "Strathmore University",
+    "abbreviation": "SU",
+    "institutionType": "University",
+    "email": "info@strathmore.edu",
+    "phone": "0712345678",
+    "website": "https://strathmore.edu",
+    "address": "Madaraka Estate",
+    "city": "Nairobi",
+    "county": "Nairobi",
+    "description": "A leading university in Kenya"
+}
 ```
-/schools
+
+**Institution Types**
+- University
+- TVET
+- College
+- High School
+- Training Institute
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "School profile created successfully.",
+    "data": {
+        "_id": "...",
+        "userId": "...",
+        "schoolName": "Strathmore University",
+        "abbreviation": "SU",
+        "institutionType": "University",
+        "email": "info@strathmore.edu",
+        "phone": "0712345678",
+        "website": "https://strathmore.edu",
+        "city": "Nairobi",
+        "county": "Nairobi",
+        "description": "A leading university in Kenya",
+        "verified": false,
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
 ```
+
+---
+
+### Get All Schools
+
+**GET /schools** (Public)
+
+### Get My Profile
+
+**GET /schools/me**
+
+### Get School By ID
+
+**GET /schools/:id** (Public)
+
+### Update School Profile
+
+**PUT /schools/:id**
+
+### Delete School Profile
+
+**DELETE /schools/:id** (Admin only)
 
 ---
 
