@@ -50,7 +50,8 @@ export const registerValidator = [
       "student",
       "company",
       "school",
-      "supervisor"
+      "supervisor",
+      "admin"
     ])
     .withMessage("Invalid role selected"),
 ];

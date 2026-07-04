@@ -1455,6 +1455,151 @@ Same shape as Create response.
 
 ---
 
+## Attachments
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /attachments | Create attachment from accepted application | Yes | Admin |
+| GET | /attachments | List all attachments | Yes | Admin |
+| GET | /attachments/my | Get my attachments | Yes | Student |
+| GET | /attachments/:id | Get attachment by ID | Yes | Authenticated |
+| PUT | /attachments/:id | Update attachment | Yes | Admin |
+| DELETE | /attachments/:id | Delete attachment | Yes | Admin |
+| PATCH | /attachments/:id/complete | Mark attachment as completed | Yes | Admin |
+| PATCH | /attachments/:id/terminate | Terminate attachment | Yes | Admin |
+| PATCH | /attachments/:id/assign-supervisor/:field | Assign supervisor | Yes | Admin |
+
+---
+
+### Create Attachment
+
+**POST /attachments**
+
+Can only be created from an **Accepted** application. One attachment per application.
+
+**Request Body**
+
+```json
+{
+    "applicationId": "...",
+    "startDate": "2026-08-01",
+    "endDate": "2026-10-31",
+    "terms": "Standard 3-month attachment",
+    "academicSupervisorId": "...",
+    "notes": ""
+}
+```
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Attachment created successfully.",
+    "data": {
+        "_id": "...",
+        "applicationId": "...",
+        "studentId": {
+            "_id": "...",
+            "userId": { "firstName": "John", "lastName": "Doe", "email": "..." }
+        },
+        "opportunityId": {
+            "_id": "...",
+            "title": "Software Engineer Intern",
+            "location": "Nairobi"
+        },
+        "companyId": {
+            "_id": "...",
+            "companyName": "Tech Corp Ltd",
+            "logo": ""
+        },
+        "academicSupervisorId": { ... },
+        "startDate": "2026-08-01T00:00:00.000Z",
+        "endDate": "2026-10-31T00:00:00.000Z",
+        "status": "Active",
+        "terms": "Standard 3-month attachment",
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
+```
+
+---
+
+### List All Attachments
+
+**GET /attachments** (Admin only)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Attachments retrieved successfully.",
+    "data": [...]
+}
+```
+
+---
+
+### Get My Attachments
+
+**GET /attachments/my** (Student only)
+
+Returns all attachments for the authenticated student.
+
+---
+
+### Get Attachment By ID
+
+**GET /attachments/:id**
+
+**Success Response (200 OK)**
+
+Same shape as Create response.
+
+---
+
+### Update Attachment
+
+**PUT /attachments/:id** (Admin only)
+
+All fields optional.
+
+---
+
+### Complete Attachment
+
+**PATCH /attachments/:id/complete** (Admin only)
+
+Sets status to `Completed`. Cannot complete a terminated attachment.
+
+---
+
+### Terminate Attachment
+
+**PATCH /attachments/:id/terminate** (Admin only)
+
+Sets status to `Terminated`. Cannot terminate a completed attachment.
+
+---
+
+### Assign Supervisor
+
+**PATCH /attachments/:id/assign-supervisor/:supervisorField** (Admin only)
+
+`supervisorField` should be `academicSupervisorId` or `industrialSupervisorId`.
+
+**Request Body**
+
+```json
+{
+    "supervisorId": "..."
+}
+```
+
+---
+
 ## Logbooks
 
 ```

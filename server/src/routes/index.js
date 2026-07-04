@@ -7,6 +7,7 @@ import opportunityRoutes from "../modules/opportunities/routes/opportunity.route
 import applicationRoutes from "../modules/applications/routes/application.routes.js";
 import schoolRoutes from "../modules/schools/routes/school.routes.js";
 import supervisorRoutes from "../modules/supervisors/routes/supervisor.routes.js";
+import attachmentRoutes from "../modules/attachments/routes/attachment.routes.js";
 
 const router = Router();
 
@@ -80,5 +81,13 @@ router.use("/schools", schoolRoutes);
 */
 
 router.use("/supervisors", supervisorRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Attachments
+|--------------------------------------------------------------------------
+*/
+
+router.use("/attachments", attachmentRoutes);
 
 export default router;
