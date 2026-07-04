@@ -3,6 +3,7 @@ import { Router } from "express";
 import authRoutes from "../modules/auth/routes/auth.routes.js";
 import studentRoutes from "../modules/students/routes/student.routes.js";
 import companyRoutes from "../modules/companies/routes/company.routes.js";
+import opportunityRoutes from "../modules/opportunities/routes/opportunity.routes.js";
 
 const router = Router();
 
@@ -44,5 +45,13 @@ router.use("/students", studentRoutes);
 */
 
 router.use("/companies", companyRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Opportunities
+|--------------------------------------------------------------------------
+*/
+
+router.use("/opportunities", opportunityRoutes);
 
 export default router;

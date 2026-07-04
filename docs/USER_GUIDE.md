@@ -43,4 +43,28 @@
 
 ---
 
+## Opportunity Module
+
+### For Companies — Posting Opportunities
+
+1. Ensure you have a company profile first.
+2. Create an opportunity via `POST /api/v1/opportunities` with title, description, category, location, vacancies, deadline, requirements, and other details.
+3. Opportunities start as **Draft** — hidden from students.
+4. When ready, publish via `PATCH /api/v1/opportunities/:id/publish`.
+5. Close applications via `PATCH /api/v1/opportunities/:id/close`.
+
+### Managing Your Opportunities
+
+- List your opportunities: `GET /api/v1/opportunities/my`
+- Edit an opportunity: `PUT /api/v1/opportunities/:id`
+
+### For Students — Browsing Opportunities
+
+- Browse all open opportunities: `GET /api/v1/opportunities`
+- Search by keyword: `GET /api/v1/opportunities?search=Software`
+- Filter by location: `GET /api/v1/opportunities?location=Nairobi`
+- Pagination supported: `?page=1&limit=10`
+
+---
+
 *More modules will be documented as development continues.*

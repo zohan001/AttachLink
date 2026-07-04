@@ -724,8 +724,270 @@ Same shape as Get All Companies.
 
 ## Opportunities
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /opportunities | Create opportunity | Yes | Company |
+| GET | /opportunities | List/search opportunities | No | Public |
+| GET | /opportunities/my | My company's opportunities | Yes | Company |
+| GET | /opportunities/:id | Get opportunity by ID | No | Public |
+| PUT | /opportunities/:id | Update opportunity | Yes | Owner, Admin |
+| DELETE | /opportunities/:id | Delete opportunity | Yes | Admin |
+| PATCH | /opportunities/:id/publish | Publish opportunity | Yes | Owner, Admin |
+| PATCH | /opportunities/:id/close | Close opportunity | Yes | Owner, Admin |
+
+---
+
+### Create Opportunity
+
+**POST /opportunities**
+
+**Request Body**
+
+```json
+{
+    "title": "Software Engineer Intern",
+    "description": "Join our engineering team...",
+    "category": "ICT",
+    "internshipType": "Internship",
+    "location": "Nairobi",
+    "workMode": "Hybrid",
+    "vacancies": 3,
+    "applicationDeadline": "2026-08-30",
+    "duration": "3 months",
+    "requirements": ["Degree in Computer Science", "JavaScript skills"],
+    "responsibilities": ["Write code", "Attend standups"],
+    "skills": ["JavaScript", "Node.js", "React"],
+    "benefits": ["Certification", "Stipend"],
+    "salary": 30000,
+    "currency": "KES"
+}
 ```
-/opportunities
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunity created successfully.",
+    "data": {
+        "_id": "...",
+        "companyId": "...",
+        "title": "Software Engineer Intern",
+        "description": "Join our engineering team...",
+        "category": "ICT",
+        "internshipType": "Internship",
+        "location": "Nairobi",
+        "workMode": "Hybrid",
+        "vacancies": 3,
+        "applicationDeadline": "2026-08-30T00:00:00.000Z",
+        "duration": "3 months",
+        "requirements": ["Degree in Computer Science", "JavaScript skills"],
+        "responsibilities": ["Write code", "Attend standups"],
+        "skills": ["JavaScript", "Node.js", "React"],
+        "benefits": ["Certification", "Stipend"],
+        "salary": 30000,
+        "currency": "KES",
+        "status": "Draft",
+        "published": false,
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
+```
+
+**Validation Rules**
+
+- title required (max 200 chars)
+- description required
+- category required
+- internshipType must be Industrial Attachment, Internship, Graduate Trainee, or Apprenticeship
+- location required
+- workMode must be On-site, Hybrid, or Remote
+- vacancies required, minimum 1
+- applicationDeadline required, must be in the future
+- duration required
+- requirements required, at least 1
+- responsibilities, skills, benefits optional arrays
+- salary optional, must be positive
+- currency optional
+
+**Possible Errors**
+
+| Status | Description |
+|--------|-------------|
+| 400 | Validation Error |
+| 401 | Unauthorized |
+| 403 | Forbidden (non-company users) |
+| 500 | Internal Server Error |
+
+---
+
+### List / Search Opportunities
+
+**GET /opportunities** (Public)
+
+Supports query parameters for search, filtering, sorting, and pagination.
+
+**Query Parameters**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| search | String | Search in title, description, skills |
+| location | String | Filter by location |
+| category | String | Filter by category |
+| workMode | String | Filter by work mode (On-site, Hybrid, Remote) |
+| status | String | Filter by status (Draft, Open, Closed, Expired) |
+| sort | String | Sort: newest, oldest, deadline |
+| page | Number | Page number (default: 1) |
+| limit | Number | Results per page (default: 10) |
+
+**Example**
+
+```
+GET /opportunities?search=Software&location=Nairobi&category=ICT&workMode=Hybrid&sort=newest&page=1&limit=10
+```
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunities retrieved successfully.",
+    "data": {
+        "opportunities": [
+            {
+                "_id": "...",
+                "companyId": {
+                    "_id": "...",
+                    "companyName": "Tech Corp Ltd",
+                    "logo": "",
+                    "city": "Nairobi",
+                    "industry": "Technology"
+                },
+                "title": "Software Engineer Intern",
+                "location": "Nairobi",
+                "workMode": "Hybrid",
+                "vacancies": 3,
+                "status": "Open",
+                ...
+            }
+        ],
+        "pagination": {
+            "page": 1,
+            "limit": 10,
+            "total": 1,
+            "pages": 1
+        }
+    }
+}
+```
+
+Note: Draft opportunities are hidden from public listings.
+
+---
+
+### Get My Company's Opportunities
+
+**GET /opportunities/my**
+
+Returns all opportunities created by the authenticated company, most recent first.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Your opportunities retrieved successfully.",
+    "data": [...]
+}
+```
+
+---
+
+### Get Opportunity By ID
+
+**GET /opportunities/:id** (Public)
+
+**Success Response (200 OK)**
+
+Same shape as a single opportunity from the list, with companyId populated.
+
+---
+
+### Update Opportunity
+
+**PUT /opportunities/:id**
+
+All fields optional. Only the owner company or an admin can update.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunity updated successfully.",
+    "data": {...}
+}
+```
+
+---
+
+### Delete Opportunity
+
+**DELETE /opportunities/:id**
+
+Admin only.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunity deleted successfully."
+}
+```
+
+---
+
+### Publish Opportunity
+
+**PATCH /opportunities/:id/publish**
+
+Sets `published: true` and `status: Open`. Cannot publish if deadline is in the past.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunity published successfully.",
+    "data": {
+        "published": true,
+        "status": "Open",
+        ...
+    }
+}
+```
+
+---
+
+### Close Opportunity
+
+**PATCH /opportunities/:id/close**
+
+Sets `status: Closed`. Applications can no longer be accepted.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Opportunity closed successfully.",
+    "data": {
+        "status": "Closed",
+        ...
+    }
+}
 ```
 
 ---
