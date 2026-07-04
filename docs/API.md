@@ -1314,8 +1314,143 @@ Pending → Under Review → Shortlisted → Interview Scheduled → Accepted
 
 ## Supervisors
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /supervisors | Create supervisor profile | Yes | Supervisor |
+| GET | /supervisors | List all supervisors | No | Public |
+| GET | /supervisors/me | Get own profile | Yes | Supervisor |
+| GET | /supervisors/:id | Get supervisor by ID | No | Public |
+| PUT | /supervisors/:id | Update supervisor profile | Yes | Owner, Admin |
+| DELETE | /supervisors/:id | Delete supervisor profile | Yes | Admin |
+
+---
+
+### Create Supervisor Profile
+
+**POST /supervisors**
+
+Two types of supervisors:
+- **academic** – belongs to a school (`schoolId` required)
+- **industrial** – belongs to a company (`companyId` required)
+
+**Request Body**
+
+```json
+{
+    "supervisorType": "academic",
+    "schoolId": "...",
+    "department": "Computing",
+    "phone": "0712345678",
+    "position": "Lecturer"
+}
 ```
-/supervisors
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Supervisor profile created successfully.",
+    "data": {
+        "_id": "...",
+        "userId": {
+            "_id": "...",
+            "firstName": "Dr.",
+            "lastName": "Smith",
+            "email": "smith@university.edu",
+            "avatar": ""
+        },
+        "supervisorType": "academic",
+        "schoolId": {
+            "_id": "...",
+            "schoolName": "Strathmore University",
+            "abbreviation": "SU"
+        },
+        "companyId": null,
+        "department": "Computing",
+        "phone": "0712345678",
+        "position": "Lecturer",
+        "isActive": true,
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
+```
+
+---
+
+### List All Supervisors
+
+**GET /supervisors** (Public)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Supervisors retrieved successfully.",
+    "data": [...]
+}
+```
+
+---
+
+### Get My Profile
+
+**GET /supervisors/me**
+
+**Success Response (200 OK)**
+
+Same shape as Create response.
+
+---
+
+### Get Supervisor By ID
+
+**GET /supervisors/:id** (Public)
+
+**Success Response (200 OK)**
+
+Same shape as Create response.
+
+---
+
+### Update Supervisor Profile
+
+**PUT /supervisors/:id**
+
+**Request Body** (all fields optional)
+
+```json
+{
+    "position": "Senior Lecturer",
+    "phone": "0798765432"
+}
+```
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Supervisor profile updated successfully.",
+    "data": {...}
+}
+```
+
+---
+
+### Delete Supervisor Profile
+
+**DELETE /supervisors/:id** (Admin only)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Supervisor profile deleted successfully."
+}
 ```
 
 ---

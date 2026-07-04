@@ -6,6 +6,7 @@ import companyRoutes from "../modules/companies/routes/company.routes.js";
 import opportunityRoutes from "../modules/opportunities/routes/opportunity.routes.js";
 import applicationRoutes from "../modules/applications/routes/application.routes.js";
 import schoolRoutes from "../modules/schools/routes/school.routes.js";
+import supervisorRoutes from "../modules/supervisors/routes/supervisor.routes.js";
 
 const router = Router();
 
@@ -71,5 +72,13 @@ router.use("/applications", applicationRoutes);
 */
 
 router.use("/schools", schoolRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Supervisors
+|--------------------------------------------------------------------------
+*/
+
+router.use("/supervisors", supervisorRoutes);
 
 export default router;
