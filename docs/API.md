@@ -542,8 +542,174 @@ Same shape as Get My Profile.
 
 ## Companies
 
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| POST | /companies | Create company profile | Yes | Company |
+| GET | /companies | List all companies | No | Public |
+| GET | /companies/me | Get own profile | Yes | Company |
+| GET | /companies/:id | Get company by ID | No | Public |
+| PUT | /companies/:id | Update company profile | Yes | Owner, Admin |
+| DELETE | /companies/:id | Delete company profile | Yes | Admin |
+
+---
+
+### Create Company Profile
+
+**POST /companies**
+
+**Request Body**
+
+```json
+{
+    "companyName": "Tech Corp Ltd",
+    "industry": "Technology",
+    "email": "info@techcorp.com",
+    "phone": "0711111111",
+    "registrationNumber": "REG001",
+    "address": "123 Tech Street",
+    "city": "Nairobi",
+    "county": "Nairobi",
+    "website": "https://techcorp.com",
+    "description": "A leading tech company"
+}
 ```
-/companies
+
+**Success Response (201 Created)**
+
+```json
+{
+    "success": true,
+    "message": "Company profile created successfully.",
+    "data": {
+        "_id": "...",
+        "userId": "...",
+        "companyName": "Tech Corp Ltd",
+        "industry": "Technology",
+        "email": "info@techcorp.com",
+        "phone": "0711111111",
+        "registrationNumber": "REG001",
+        "address": "123 Tech Street",
+        "city": "Nairobi",
+        "county": "Nairobi",
+        "website": "https://techcorp.com",
+        "description": "A leading tech company",
+        "logo": "",
+        "verified": false,
+        "createdAt": "...",
+        "updatedAt": "..."
+    }
+}
+```
+
+**Validation Rules**
+
+- companyName required, unique, 2–100 characters
+- industry required
+- email valid email
+- phone required
+- website optional, must be valid URL if provided
+- registrationNumber optional
+- address, city, county optional
+
+**Possible Errors**
+
+| Status | Description |
+|--------|-------------|
+| 400 | Validation Error |
+| 401 | Unauthorized |
+| 403 | Forbidden |
+| 409 | Profile or company name already exists |
+| 500 | Internal Server Error |
+
+---
+
+### Get All Companies
+
+**GET /companies** (Public)
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Companies retrieved successfully.",
+    "data": [
+        {
+            "_id": "...",
+            "userId": {
+                "_id": "...",
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "john@example.com",
+                "avatar": ""
+            },
+            "companyName": "Tech Corp Ltd",
+            "industry": "Technology",
+            ...
+        }
+    ]
+}
+```
+
+---
+
+### Get My Profile
+
+**GET /companies/me**
+
+**Success Response (200 OK)**
+
+Same shape as Get All Companies but returns only the authenticated user's company.
+
+---
+
+### Get Company By ID
+
+**GET /companies/:id** (Public)
+
+**Success Response (200 OK)**
+
+Same shape as Get All Companies.
+
+---
+
+### Update Company Profile
+
+**PUT /companies/:id**
+
+**Request Body** (all fields optional)
+
+```json
+{
+    "description": "Updated description",
+    "website": "https://new-website.com",
+    "city": "Mombasa"
+}
+```
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Company profile updated successfully.",
+    "data": {...}
+}
+```
+
+---
+
+### Delete Company Profile
+
+**DELETE /companies/:id**
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "message": "Company profile deleted successfully."
+}
 ```
 
 ---

@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import authRoutes from "../modules/auth/routes/auth.routes.js";
 import studentRoutes from "../modules/students/routes/student.routes.js";
+import companyRoutes from "../modules/companies/routes/company.routes.js";
 
 const router = Router();
 
@@ -35,5 +36,13 @@ router.use("/auth", authRoutes);
 */
 
 router.use("/students", studentRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Companies
+|--------------------------------------------------------------------------
+*/
+
+router.use("/companies", companyRoutes);
 
 export default router;
