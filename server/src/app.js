@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import mongoSanitize from "express-mongo-sanitize";
+import mongoSanitize from "./middlewares/mongoSanitize.js";
 
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
@@ -40,11 +40,11 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// NoSQL injection sanitization
-app.use(mongoSanitize());
-
 // Parse cookies
 app.use(cookieParser());
+
+// NoSQL injection sanitization
+app.use(mongoSanitize);
 
 // HTTP request logger
 app.use(morgan("dev"));

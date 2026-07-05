@@ -80,8 +80,6 @@ const schoolSchema = new mongoose.Schema(
   }
 );
 
-schoolSchema.index({ schoolName: 1 });
-
 const School = mongoose.model("School", schoolSchema);
 
 export default School;
