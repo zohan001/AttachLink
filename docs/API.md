@@ -1889,9 +1889,67 @@ Changes status to **Submitted** (locked). Emits `evaluation.submitted` event.
 
 ## Reports
 
+Read-only aggregation endpoints. No model — queries existing data across modules.
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | /reports/students/:id | Student progress report | Yes | Admin, School, Supervisor |
+| GET | /reports/attachments/:id | Attachment completion report | Yes | Admin, School, Supervisor, Company |
+| GET | /reports/companies/:id | Company performance report | Yes | Admin |
+
+---
+
+### Student Report
+
+**GET /reports/students/:id**
+
+Returns student profile, attachment history, logbook summary (totals by status, hours), evaluation summary (average scores per criterion).
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "data": {
+        "student": { ... },
+        "attachments": [ ... ],
+        "logbookSummary": {
+            "total": 10,
+            "approved": 7,
+            "submitted": 2,
+            "rejected": 1,
+            "draft": 0,
+            "totalHoursWorked": 64
+        },
+        "evaluationSummary": {
+            "total": 2,
+            "averageOverallScore": 4.2,
+            "averageCriteriaScores": {
+                "punctuality": 4.5,
+                "technicalSkills": 4.0,
+                "communication": 4.0,
+                ...
+            }
+        }
+    }
+}
 ```
-/reports
-```
+
+---
+
+### Attachment Report
+
+**GET /reports/attachments/:id**
+
+Returns attachment details, all logbook entries, all evaluations.
+
+---
+
+### Company Report
+
+**GET /reports/companies/:id** (Admin only)
+
+Returns company profile, opportunity stats (total/active/closed/draft), attachment stats (total/active/completed/unique students).
 
 ---
 

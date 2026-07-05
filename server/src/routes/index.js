@@ -10,6 +10,7 @@ import supervisorRoutes from "../modules/supervisors/routes/supervisor.routes.js
 import attachmentRoutes from "../modules/attachments/routes/attachment.routes.js";
 import logbookRoutes from "../modules/logbooks/routes/logbook.routes.js";
 import evaluationRoutes from "../modules/evaluations/routes/evaluation.routes.js";
+import reportRoutes from "../modules/reports/routes/report.routes.js";
 
 const router = Router();
 
@@ -107,5 +108,13 @@ router.use("/logbooks", logbookRoutes);
 */
 
 router.use("/evaluations", evaluationRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Reports
+|--------------------------------------------------------------------------
+*/
+
+router.use("/reports", reportRoutes);
 
 export default router;
