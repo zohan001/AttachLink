@@ -12,6 +12,8 @@ import logbookRoutes from "../modules/logbooks/routes/logbook.routes.js";
 import evaluationRoutes from "../modules/evaluations/routes/evaluation.routes.js";
 import reportRoutes from "../modules/reports/routes/report.routes.js";
 import notificationRoutes from "../modules/notifications/routes/notification.routes.js";
+import analyticsRoutes from "../modules/analytics/routes/analytics.routes.js";
+import dashboardRoutes from "../modules/dashboard/routes/dashboard.routes.js";
 
 const router = Router();
 
@@ -125,5 +127,21 @@ router.use("/reports", reportRoutes);
 */
 
 router.use("/notifications", notificationRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Analytics
+|--------------------------------------------------------------------------
+*/
+
+router.use("/analytics", analyticsRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
+router.use("/dashboard", dashboardRoutes);
 
 export default router;

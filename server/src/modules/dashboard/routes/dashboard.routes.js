@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import reportController from "../controllers/report.controller.js";
+import dashboardController from "../controllers/dashboard.controller.js";
 import authMiddleware from "../../../middlewares/authMiddleware.js";
 import roleMiddleware from "../../../middlewares/roleMiddleware.js";
 
@@ -8,22 +8,15 @@ const router = Router();
 
 /**
  * @swagger
- * /reports/students/{id}:
+ * /dashboard/admin:
  *   get:
- *     summary: Get student report
- *     tags: [Reports]
+ *     summary: Get admin dashboard data
+ *     tags: [Dashboard]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Student ID
  *     responses:
  *       200:
- *         description: Student report data
+ *         description: Admin dashboard data
  *         content:
  *           application/json:
  *             schema:
@@ -40,114 +33,152 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
- *       404:
- *         description: Student not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.get(
-  "/students/:id",
-  authMiddleware,
-  roleMiddleware("admin", "school", "supervisor"),
-  reportController.studentReport
-);
-
-/**
- * @swagger
- * /reports/attachments/{id}:
- *   get:
- *     summary: Get attachment report
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Attachment ID
- *     responses:
- *       200:
- *         description: Attachment report data
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       403:
- *         description: Forbidden
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       404:
- *         description: Attachment not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.get(
-  "/attachments/:id",
-  authMiddleware,
-  roleMiddleware("admin", "school", "supervisor", "company"),
-  reportController.attachmentReport
-);
-
-/**
- * @swagger
- * /reports/companies/{id}:
- *   get:
- *     summary: Get company report
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Company ID
- *     responses:
- *       200:
- *         description: Company report data
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       403:
- *         description: Forbidden
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       404:
- *         description: Company not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.get(
-  "/companies/:id",
+  "/admin",
   authMiddleware,
   roleMiddleware("admin"),
-  reportController.companyReport
+  dashboardController.admin
+);
+
+/**
+ * @swagger
+ * /dashboard/company:
+ *   get:
+ *     summary: Get company dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Company dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get(
+  "/company",
+  authMiddleware,
+  roleMiddleware("company"),
+  dashboardController.company
+);
+
+/**
+ * @swagger
+ * /dashboard/student:
+ *   get:
+ *     summary: Get student dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Student dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get(
+  "/student",
+  authMiddleware,
+  roleMiddleware("student"),
+  dashboardController.student
+);
+
+/**
+ * @swagger
+ * /dashboard/school:
+ *   get:
+ *     summary: Get school dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: School dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get(
+  "/school",
+  authMiddleware,
+  roleMiddleware("school"),
+  dashboardController.school
+);
+
+/**
+ * @swagger
+ * /dashboard/supervisor:
+ *   get:
+ *     summary: Get supervisor dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Supervisor dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get(
+  "/supervisor",
+  authMiddleware,
+  roleMiddleware("supervisor"),
+  dashboardController.supervisor
 );
 
 export default router;

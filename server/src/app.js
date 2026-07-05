@@ -4,6 +4,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
+
 import routes from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
@@ -37,6 +40,14 @@ app.use(cookieParser());
 
 // HTTP request logger
 app.use(morgan("dev"));
+
+/*
+|--------------------------------------------------------------------------
+| Swagger Docs
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /*
 |--------------------------------------------------------------------------
