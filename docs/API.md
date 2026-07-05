@@ -1955,9 +1955,77 @@ Returns company profile, opportunity stats (total/active/closed/draft), attachme
 
 ## Notifications
 
+Persisted notifications with auto-creation from EventBus events.
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | /notifications/my | Get my notifications | Yes | Any |
+| GET | /notifications/unread-count | Get unread count | Yes | Any |
+| PATCH | /notifications/:id/read | Mark one as read | Yes | Owner |
+| PATCH | /notifications/read-all | Mark all as read | Yes | Any |
+
+---
+
+### Get My Notifications
+
+**GET /notifications/my**
+
+Returns all notifications for the authenticated user, most recent first.
+
+**Success Response (200 OK)**
+
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "_id": "...",
+            "recipientId": "...",
+            "type": "logbook.approved",
+            "title": "Logbook Approved",
+            "message": "Your logbook entry has been approved by your supervisor.",
+            "data": { "logbookId": "...", "attachmentId": "..." },
+            "read": false,
+            "createdAt": "..."
+        }
+    ]
+}
 ```
-/notifications
+
+---
+
+### Get Unread Count
+
+**GET /notifications/unread-count**
+
+```json
+{
+    "success": true,
+    "data": { "unread": 3 }
+}
 ```
+
+---
+
+### Mark as Read
+
+**PATCH /notifications/:id/read**
+
+**PATCH /notifications/read-all**
+
+---
+
+### Auto-generated Notifications (EventBus)
+
+Notifications are automatically created when these events fire:
+
+| Event | Recipient | Title |
+|-------|-----------|-------|
+| `attachment.created` | Student | Attachment Created |
+| `logbook.submitted` | Assigned supervisors | Logbook Submitted |
+| `logbook.approved` | Student | Logbook Approved |
+| `evaluation.submitted` | Student | Evaluation Submitted |
+| `application.status_changed` | Student/Company | Direct service call |
 
 ---
 

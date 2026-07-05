@@ -11,6 +11,7 @@ import attachmentRoutes from "../modules/attachments/routes/attachment.routes.js
 import logbookRoutes from "../modules/logbooks/routes/logbook.routes.js";
 import evaluationRoutes from "../modules/evaluations/routes/evaluation.routes.js";
 import reportRoutes from "../modules/reports/routes/report.routes.js";
+import notificationRoutes from "../modules/notifications/routes/notification.routes.js";
 
 const router = Router();
 
@@ -116,5 +117,13 @@ router.use("/evaluations", evaluationRoutes);
 */
 
 router.use("/reports", reportRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Notifications
+|--------------------------------------------------------------------------
+*/
+
+router.use("/notifications", notificationRoutes);
 
 export default router;
