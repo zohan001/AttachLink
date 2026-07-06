@@ -32,7 +32,12 @@ export default function Login() {
       toast.success("Login successful");
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      const data = err.response?.data;
+      if (data?.errors?.length) {
+        data.errors.forEach((e) => toast.error(e.message));
+      } else {
+        toast.error(data?.message || "Login failed");
+      }
     }
   };
 

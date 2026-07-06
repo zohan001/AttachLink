@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -7,12 +8,15 @@ import { getOpportunity, publishOpportunity, closeOpportunity, deleteOpportunity
 import { createApplication } from "../../api/applications";
 import Loading from "../../components/common/Loading";
 import StatusBadge from "../../components/common/StatusBadge";
+import Modal from "../../components/common/Modal";
 
 export default function OpportunityDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useSelector((s) => s.auth);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [coverLetter, setCoverLetter] = useState("");
 
   const { data: opp, isLoading } = useQuery({
     queryKey: ["opportunity", id],
@@ -20,8 +24,8 @@ export default function OpportunityDetail() {
   });
 
   const applyMutation = useMutation({
-    mutationFn: () => createApplication({ opportunityId: id }),
-    onSuccess: () => { toast.success("Application submitted"); qc.invalidateQueries({ queryKey: ["my-applications"] }); },
+    mutationFn: () => createApplication({ opportunityId: id, coverLetter }),
+    onSuccess: () => { toast.success("Application submitted"); qc.invalidateQueries({ queryKey: ["my-applications"] }); setShowApplyModal(false); setCoverLetter(""); },
     onError: (err) => toast.error(err.response?.data?.message || "Error"),
   });
 
@@ -79,7 +83,7 @@ export default function OpportunityDetail() {
 
         <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
           {user?.role === "student" && opp.status === "Open" && (
-            <button onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending} className="btn-primary">
+            <button onClick={() => setShowApplyModal(true)} disabled={applyMutation.isPending} className="btn-primary">
               {applyMutation.isPending ? "Applying..." : "Apply Now"}
             </button>
           )}
@@ -101,6 +105,27 @@ export default function OpportunityDetail() {
           )}
         </div>
       </div>
+
+      <Modal open={showApplyModal} onClose={() => setShowApplyModal(false)} title="Apply for this Opportunity">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cover Letter</label>
+            <textarea
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              rows={6}
+              className="input w-full"
+              placeholder="Tell the company why you're a good fit for this role (minimum 50 characters)..."
+            />
+          </div>
+          <div className="flex gap-3 justify-end">
+            <button onClick={() => setShowApplyModal(false)} className="btn-secondary">Cancel</button>
+            <button onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || coverLetter.length < 50} className="btn-primary">
+              {applyMutation.isPending ? "Submitting..." : "Submit Application"}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
