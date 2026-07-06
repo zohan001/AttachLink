@@ -18,8 +18,8 @@ export default function OpportunityList() {
     queryFn: () => getOpportunities({ search, page, limit: 10 }),
   });
 
-  const items = data?.data?.items || data?.data || [];
-  const pagination = data?.data?.pagination || data?.pagination;
+  const items = data?.data?.opportunities || [];
+  const pagination = data?.data?.pagination;
 
   return (
     <div>
