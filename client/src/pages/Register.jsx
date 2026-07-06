@@ -37,7 +37,7 @@ export default function Register() {
   const onSubmit = async (data) => {
     try {
       const res = await api.post("/auth/register", data);
-      dispatch(setCredentials(res.data.data));
+      dispatch(setCredentials(res.data));
       toast.success("Registration successful");
       navigate("/dashboard");
     } catch (err) {

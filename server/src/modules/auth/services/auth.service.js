@@ -33,6 +33,42 @@ class AuthService {
       refreshToken,
     };
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Login User
+  |--------------------------------------------------------------------------
+  */
+
+  async login(email, password) {
+    const user = await authRepository.findByEmail(email);
+
+    if (!user) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    const isMatch = await user.comparePassword(password);
+
+    if (!isMatch) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    await authRepository.updateLastLogin(user._id);
+
+    const accessToken = generateAccessToken(user);
+
+    const refreshToken = generateRefreshToken(user);
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
+  }
 }
 
 export default new AuthService();

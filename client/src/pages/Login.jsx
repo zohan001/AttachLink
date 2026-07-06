@@ -28,7 +28,7 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const res = await api.post("/auth/login", data);
-      dispatch(setCredentials(res.data.data));
+      dispatch(setCredentials(res.data));
       toast.success("Login successful");
       navigate("/dashboard");
     } catch (err) {

@@ -55,3 +55,21 @@ export const registerValidator = [
     ])
     .withMessage("Invalid role selected"),
 ];
+
+/*
+|--------------------------------------------------------------------------
+| Login Validation
+|--------------------------------------------------------------------------
+*/
+
+export const loginValidator = [
+  body("email")
+    .trim()
+    .normalizeEmail()
+    .isEmail()
+    .withMessage("Please provide a valid email address"),
+
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required"),
+];
