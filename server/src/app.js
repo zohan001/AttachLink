@@ -14,7 +14,7 @@ import { apiLimiter, authLimiter } from "./middlewares/rateLimiter.js";
 
 const app = express();
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 /*
 |--------------------------------------------------------------------------
