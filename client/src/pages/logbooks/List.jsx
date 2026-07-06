@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import { Plus, ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react";
+import { Plus, ThumbsUp, ThumbsDown, MessageSquare, Send, ExternalLink } from "lucide-react";
 import {
   getMyLogbooks,
   getAttachmentLogbooks,
@@ -17,6 +17,7 @@ import {
   rejectLogbook,
   commentLogbook,
 } from "../../api/logbooks";
+import { getMyAttachments } from "../../api/attachments";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
 import StatusBadge from "../../components/common/StatusBadge";
@@ -45,6 +46,12 @@ export default function LogbookList() {
   const { data: items, isLoading } = useQuery({
     queryKey: ["logbooks", attachId || "my", user?.role],
     queryFn: () => (attachId ? getAttachmentLogbooks(attachId) : getMyLogbooks()),
+  });
+
+  const { data: attachments } = useQuery({
+    queryKey: ["my-attachments"],
+    queryFn: getMyAttachments,
+    enabled: !attachId && user?.role === "student",
   });
 
   const list = Array.isArray(items) ? items : [];
@@ -103,12 +110,33 @@ export default function LogbookList() {
       <PageHeader
         title="Logbooks"
         action={
+          !attachId && user?.role === "student" ? null :
           user?.role === "student" && (
             <button onClick={() => { setEditing(null); reset({ date: "", activities: "", hoursWorked: 8, skillsLearned: "", challenges: "", solutions: "" }); setShowForm(true); }}
               className="btn-primary inline-flex items-center gap-2"><Plus size={18} /> New Entry</button>
           )
         }
       />
+
+      {!attachId && user?.role === "student" && attachments?.length > 0 && (
+        <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+          <p className="text-sm text-indigo-700 font-medium mb-2">Select an attachment to add logbook entries:</p>
+          <div className="flex flex-wrap gap-2">
+            {attachments.map((att) => (
+              <Link key={att._id} to={`/attachments/${att._id}/logbooks`}
+                className="inline-flex items-center gap-1 text-sm bg-white px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-100">
+                <ExternalLink size={14} /> {att.opportunityId?.title || att._id}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!attachId && user?.role === "student" && (!attachments || attachments.length === 0) && (
+        <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <p className="text-sm text-yellow-700">You need an active attachment before you can create logbook entries.</p>
+        </div>
+      )}
 
       {isLoading ? <Loading /> : (
         <div className="space-y-4">
