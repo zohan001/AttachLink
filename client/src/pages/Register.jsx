@@ -14,7 +14,7 @@ const schema = z
     firstName: z.string().min(1, "Required"),
     lastName: z.string().min(1, "Required"),
     email: z.string().email("Invalid email"),
-    password: z.string().min(6, "Min 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(1, "Required"),
     role: z.enum(["student", "company", "school", "supervisor"]),
   })
@@ -41,7 +41,12 @@ export default function Register() {
       toast.success("Registration successful");
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed");
+      const data = err.response?.data;
+      if (data?.errors?.length) {
+        data.errors.forEach((e) => toast.error(e.message));
+      } else {
+        toast.error(data?.message || "Registration failed");
+      }
     }
   };
 
