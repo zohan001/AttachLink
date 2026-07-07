@@ -85,7 +85,19 @@ class OpportunityService {
     }
 
     if (requestingUserRole !== "admin") {
-      throw new Error("Only admins can delete opportunities");
+      const company = await companyRepository.findByUserId(requestingUserId);
+
+      const isOwner =
+        company &&
+        opportunity.companyId._id.toString() === company._id.toString();
+
+      if (!isOwner) {
+        throw new Error("You can only delete your own opportunities");
+      }
+
+      if (opportunity.status !== "Draft") {
+        throw new Error("Only draft opportunities can be deleted");
+      }
     }
 
     await opportunityRepository.delete(id);

@@ -101,7 +101,9 @@ export default function OpportunityDetail() {
           {canManage && (
             <>
               <Link to={`/opportunities/${id}/edit`} className="btn-secondary flex items-center gap-2"><Edit size={16} /> Edit</Link>
-              <button onClick={() => { if (confirm("Delete this opportunity?")) deleteMut.mutate(); }} className="btn-danger flex items-center gap-2">Delete</button>
+              {(user?.role === "admin" || opp.status === "Draft") && (
+                <button onClick={() => { if (confirm("Delete this opportunity?")) deleteMut.mutate(); }} className="btn-danger flex items-center gap-2">Delete</button>
+              )}
             </>
           )}
         </div>

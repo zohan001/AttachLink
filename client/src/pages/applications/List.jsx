@@ -14,7 +14,7 @@ export default function ApplicationList() {
 
   const { data: items, isLoading } = useQuery({
     queryKey: ["applications", user?.role],
-    queryFn: user?.role === "company" ? getCompanyApplications : getMyApplications,
+    queryFn: () => (user?.role === "company" ? getCompanyApplications() : getMyApplications()),
   });
 
   const withdrawMut = useMutation({

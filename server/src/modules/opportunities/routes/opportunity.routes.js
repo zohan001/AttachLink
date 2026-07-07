@@ -300,7 +300,7 @@ router.put(
 router.delete(
   "/:id",
   authMiddleware,
-  roleMiddleware("admin"),
+  roleMiddleware("admin", "company"),
   opportunityController.delete
 );
 
