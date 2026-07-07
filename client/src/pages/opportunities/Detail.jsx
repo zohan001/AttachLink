@@ -51,7 +51,7 @@ export default function OpportunityDetail() {
   if (isLoading) return <Loading />;
   if (!opp) return <p className="text-center py-12 text-gray-400">Not found</p>;
 
-  const isOwner = opp.companyId?._id === user?.id || opp.companyId === user?.id;
+  const isOwner = opp.companyId?._id === user?.companyId || opp.companyId === user?.companyId;
   const canManage = isOwner || user?.role === "admin";
 
   return (

@@ -2,8 +2,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { handleApiError } from "../../utils/errorHandler";
+import { updateUser } from "../../store/authSlice";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
@@ -23,6 +25,9 @@ const schema = z.object({
 
 export default function CompanyProfile() {
   const qc = useQueryClient();
+  const dispatch = useDispatch();
+  const { user } = useSelector((s) => s.auth);
+
   const { data: profile, isLoading } = useQuery({
     queryKey: ["my-company-profile"],
     queryFn: () => api.get("/companies/me").then((r) => r.data.data),
@@ -50,7 +55,11 @@ export default function CompanyProfile() {
       profile?._id
         ? api.put(`/companies/${profile._id}`, data)
         : api.post("/companies", data),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      const companyId = res.data?.data?._id;
+      if (companyId && !user?.companyId) {
+        dispatch(updateUser({ companyId }));
+      }
       qc.invalidateQueries({ queryKey: ["my-company-profile"] });
       toast.success(profile?._id ? "Profile updated" : "Profile created");
     },

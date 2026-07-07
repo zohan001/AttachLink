@@ -1,4 +1,5 @@
 import authService from "../services/auth.service.js";
+import companyRepository from "../../companies/repositories/company.repository.js";
 
 class AuthController {
   /*
@@ -12,12 +13,15 @@ class AuthController {
       const { user, accessToken, refreshToken } =
         await authService.register(req.body);
 
-      // Store Refresh Token in HTTP Only Cookie
+      const company = user.role === "company"
+        ? await companyRepository.findByUserId(user._id)
+        : null;
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       return res.status(201).json({
@@ -30,6 +34,7 @@ class AuthController {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          companyId: company?._id || null,
         },
       });
     } catch (error) {
@@ -50,6 +55,10 @@ class AuthController {
       const { user, accessToken, refreshToken } =
         await authService.login(email, password);
 
+      const company = user.role === "company"
+        ? await companyRepository.findByUserId(user._id)
+        : null;
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -67,6 +76,7 @@ class AuthController {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          companyId: company?._id || null,
         },
       });
     } catch (error) {
