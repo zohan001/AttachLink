@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import { Plus, Send } from "lucide-react";
 import {
   getMyEvaluations,
@@ -62,19 +63,19 @@ export default function EvaluationList() {
   const createMut = useMutation({
     mutationFn: (data) => createEvaluation(data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["evaluations"] }); toast.success("Created"); setShowForm(false); reset(); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const updateMut = useMutation({
     mutationFn: ({ id, data }) => updateEvaluation(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["evaluations"] }); toast.success("Updated"); setEditing(null); reset(); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const submitMut = useMutation({
     mutationFn: submitEvaluation,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["evaluations"] }); toast.success("Submitted"); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const handleFormSubmit = (data) => {

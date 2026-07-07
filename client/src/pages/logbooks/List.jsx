@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import { Plus, ThumbsUp, ThumbsDown, MessageSquare, Send, ExternalLink } from "lucide-react";
 import {
   getMyLogbooks,
@@ -64,37 +65,37 @@ export default function LogbookList() {
   const createMut = useMutation({
     mutationFn: (data) => attachId ? createLogbook({ ...data, attachmentId: attachId }) : createLogbook(data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Created"); setShowForm(false); reset(); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const updateMut = useMutation({
     mutationFn: ({ id, data }) => updateLogbook(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Updated"); setEditing(null); reset(); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const submitMut = useMutation({
     mutationFn: submitLogbook,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Submitted"); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const approveMut = useMutation({
     mutationFn: approveLogbook,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Approved"); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const rejectMut = useMutation({
     mutationFn: ({ id, supervisorComment }) => rejectLogbook(id, supervisorComment),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Rejected"); setCommentId(null); setComment(""); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const commentMut = useMutation({
     mutationFn: ({ id, supervisorComment }) => commentLogbook(id, supervisorComment),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["logbooks"] }); toast.success("Comment added"); setCommentId(null); setComment(""); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const handleFormSubmit = (data) => {

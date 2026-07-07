@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
@@ -49,7 +50,7 @@ export default function StudentProfile() {
       qc.invalidateQueries({ queryKey: ["my-student-profile"] });
       toast.success(profile?._id ? "Profile updated" : "Profile created");
     },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   if (isLoading) return <Loading />;

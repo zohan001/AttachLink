@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import { getMyApplications, getCompanyApplications, withdrawApplication, updateApplicationStatus } from "../../api/applications";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
@@ -19,13 +20,13 @@ export default function ApplicationList() {
   const withdrawMut = useMutation({
     mutationFn: withdrawApplication,
     onSuccess: () => { toast.success("Withdrawn"); qc.invalidateQueries({ queryKey: ["applications"] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const statusMut = useMutation({
     mutationFn: ({ id, status }) => updateApplicationStatus(id, status),
     onSuccess: () => { toast.success("Status updated"); qc.invalidateQueries({ queryKey: ["applications"] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const list = Array.isArray(items) ? items : [];

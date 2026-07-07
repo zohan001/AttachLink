@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import { ArrowLeft, Edit, Send, XCircle } from "lucide-react";
 import { getOpportunity, publishOpportunity, closeOpportunity, deleteOpportunity } from "../../api/opportunities";
 import { createApplication } from "../../api/applications";
@@ -26,25 +27,25 @@ export default function OpportunityDetail() {
   const applyMutation = useMutation({
     mutationFn: () => createApplication({ opportunityId: id, coverLetter }),
     onSuccess: () => { toast.success("Application submitted"); qc.invalidateQueries({ queryKey: ["my-applications"] }); setShowApplyModal(false); setCoverLetter(""); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const publishMut = useMutation({
     mutationFn: () => publishOpportunity(id),
     onSuccess: () => { toast.success("Published"); qc.invalidateQueries({ queryKey: ["opportunity", id] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const closeMut = useMutation({
     mutationFn: () => closeOpportunity(id),
     onSuccess: () => { toast.success("Closed"); qc.invalidateQueries({ queryKey: ["opportunity", id] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const deleteMut = useMutation({
     mutationFn: () => deleteOpportunity(id),
     onSuccess: () => { toast.success("Deleted"); navigate("/opportunities"); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   if (isLoading) return <Loading />;

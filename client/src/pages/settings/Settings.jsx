@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 
@@ -24,7 +25,7 @@ export default function Settings() {
   const mutation = useMutation({
     mutationFn: (data) => api.put("/auth/update-password", data),
     onSuccess: () => { toast.success("Password updated"); reset(); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   return (

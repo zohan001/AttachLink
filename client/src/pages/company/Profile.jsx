@@ -3,18 +3,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
 
 const schema = z.object({
-  companyName: z.string().min(1, "Required"),
-  industry: z.string().min(1, "Required"),
-  email: z.string().email(),
-  phone: z.string().min(10),
+  companyName: z.string().min(1, "Company name is required"),
+  industry: z.string().min(1, "Industry is required"),
+  email: z.string().email("Valid email required"),
+  phone: z.string().min(10, "Phone must be at least 10 characters"),
   description: z.string().optional(),
-  website: z.string().optional(),
-  location: z.string().optional(),
+  website: z.string().url("Must be a valid URL (e.g. https://example.com)").optional().or(z.literal("")),
+  registrationNumber: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  county: z.string().optional(),
 });
 
 export default function CompanyProfile() {
@@ -34,7 +38,10 @@ export default function CompanyProfile() {
       phone: profile.phone || "",
       description: profile.description || "",
       website: profile.website || "",
-      location: profile.location || "",
+      registrationNumber: profile.registrationNumber || "",
+      address: profile.address || "",
+      city: profile.city || "",
+      county: profile.county || "",
     } : undefined,
   });
 
@@ -47,7 +54,7 @@ export default function CompanyProfile() {
       qc.invalidateQueries({ queryKey: ["my-company-profile"] });
       toast.success(profile?._id ? "Profile updated" : "Profile created");
     },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   if (isLoading) return <Loading />;
@@ -73,10 +80,19 @@ export default function CompanyProfile() {
               <input type="text" {...register("phone")} className="input" />
             </FormField>
             <FormField label="Website" error={errors.website}>
-              <input type="text" {...register("website")} className="input" />
+              <input type="url" {...register("website")} className="input" placeholder="https://example.com" />
             </FormField>
-            <FormField label="Location" error={errors.location}>
-              <input type="text" {...register("location")} className="input" />
+            <FormField label="Registration Number" error={errors.registrationNumber}>
+              <input type="text" {...register("registrationNumber")} className="input" />
+            </FormField>
+            <FormField label="City" error={errors.city}>
+              <input type="text" {...register("city")} className="input" />
+            </FormField>
+            <FormField label="County" error={errors.county}>
+              <input type="text" {...register("county")} className="input" />
+            </FormField>
+            <FormField label="Address" error={errors.address}>
+              <input type="text" {...register("address")} className="input" />
             </FormField>
             <div className="col-span-2">
               <FormField label="Description" error={errors.description}>

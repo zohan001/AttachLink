@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 import { getMyAttachments, getAttachments, completeAttachment, terminateAttachment } from "../../api/attachments";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
@@ -23,13 +24,13 @@ export default function AttachmentList() {
   const completeMut = useMutation({
     mutationFn: completeAttachment,
     onSuccess: () => { toast.success("Completed"); qc.invalidateQueries({ queryKey: ["attachments"] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const terminateMut = useMutation({
     mutationFn: terminateAttachment,
     onSuccess: () => { toast.success("Terminated"); qc.invalidateQueries({ queryKey: ["attachments"] }); },
-    onError: (err) => toast.error(err.response?.data?.message || "Error"),
+    onError: (err) => handleApiError(err),
   });
 
   const columns = [
