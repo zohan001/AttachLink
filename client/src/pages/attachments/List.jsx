@@ -8,18 +8,20 @@ import Loading from "../../components/common/Loading";
 import StatusBadge from "../../components/common/StatusBadge";
 import DataTable from "../../components/common/DataTable";
 import { Link } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, AlertCircle, UserPlus } from "lucide-react";
 
 export default function AttachmentList() {
   const { user } = useSelector((s) => s.auth);
   const qc = useQueryClient();
 
-  const { data: items, isLoading } = useQuery({
+  const { data: items, isLoading, error } = useQuery({
     queryKey: ["attachments", user?.role],
     queryFn: () => (user?.role === "student" ? getMyAttachments() : getAttachments({})),
+    retry: false,
   });
 
   const list = Array.isArray(items) ? items : [];
+  const noProfile = error?.response?.status === 404 && user?.role === "student";
 
   const completeMut = useMutation({
     mutationFn: completeAttachment,
@@ -57,10 +59,36 @@ export default function AttachmentList() {
     },
   ];
 
+  if (noProfile) {
+    return (
+      <div>
+        <PageHeader title="Attachments" />
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <UserPlus size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">Complete Your Profile First</h3>
+          <p className="text-gray-500 mb-4">You need to set up your student profile before you can view attachments.</p>
+          <Link to="/profile/student" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
+            <UserPlus size={16} /> Create Profile
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader title="Attachments" />
-      <DataTable columns={columns} data={list} loading={isLoading} />
+      {list.length === 0 && !isLoading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <AlertCircle size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">No Attachments Yet</h3>
+          <p className="text-gray-500">
+            Attachments are created when your application is accepted. Apply to an opportunity first.
+          </p>
+        </div>
+      ) : (
+        <DataTable columns={columns} data={list} loading={isLoading} />
+      )}
     </div>
   );
 }
