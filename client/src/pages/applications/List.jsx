@@ -51,7 +51,7 @@ export default function ApplicationList() {
     { key: "createdAt", label: "Applied", render: (r) => new Date(r.createdAt).toLocaleDateString() },
     {
       key: "actions", label: "Action", render: (r) =>
-        r.status === "Pending" ? (
+        (r.status === "Pending" || r.status === "Under Review") ? (
           <select
             onChange={(e) => statusMut.mutate({ id: r._id, status: e.target.value })}
             className="text-xs border border-gray-300 rounded px-2 py-1"
