@@ -8,3 +8,4 @@ export const createApplication = (data) => api.post("/applications", data).then(
 export const updateApplicationStatus = (id, status) =>
   api.patch(`/applications/${id}/status`, { status }).then((r) => r.data.data);
 export const withdrawApplication = (id) => api.patch(`/applications/${id}/withdraw`).then((r) => r.data.data);
+export const deleteApplication = (id) => api.delete(`/applications/${id}`);
