@@ -10,8 +10,8 @@ export default function AdminOpportunities() {
     queryFn: () => getOpportunities({ limit: 100 }),
   });
 
-  const items = data?.data?.items || data?.data || [];
-  const pagination = data?.data?.pagination || data?.pagination;
+  const items = data?.data?.opportunities || data?.data?.items || [];
+  const pagination = data?.data?.pagination;
 
   const columns = [
     { key: "title", label: "Title" },

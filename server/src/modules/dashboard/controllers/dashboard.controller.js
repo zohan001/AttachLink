@@ -4,7 +4,7 @@ import responseBuilder from "../../../core/response/responseBuilder.js";
 class DashboardController {
   async admin(req, res, next) {
     try {
-      const data = await dashboardService.admin();
+      const data = await dashboardService.admin(req.user.id);
 
       return responseBuilder.success(res, data, "Admin dashboard data retrieved successfully.");
     } catch (error) {

@@ -20,7 +20,7 @@ import opportunityRepository from "../../opportunities/repositories/opportunity.
 import { NotFoundError } from "../../../core/errors/index.js";
 
 class DashboardService {
-  async admin() {
+  async admin(userId) {
     const counts = await Promise.all([
       User.countDocuments(),
       Student.countDocuments(),
@@ -34,7 +34,7 @@ class DashboardService {
       Attachment.countDocuments({ status: "Completed" }),
       Logbook.countDocuments({ status: "Submitted" }),
       Evaluation.countDocuments({ status: "Submitted" }),
-      Notification.countDocuments({ read: false }),
+      Notification.countDocuments({ recipientId: userId, read: false }),
     ]);
 
     return {
