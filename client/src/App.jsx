@@ -50,31 +50,40 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile/student" element={<Lazy><StudentProfile /></Lazy>} />
-          <Route path="/profile/company" element={<Lazy><CompanyProfile /></Lazy>} />
-          <Route path="/profile/school" element={<Lazy><SchoolProfile /></Lazy>} />
-          <Route path="/profile/supervisor" element={<Lazy><SupervisorProfile /></Lazy>} />
+          <Route path="/notifications" element={<Lazy><NotificationList /></Lazy>} />
+          <Route path="/settings" element={<Lazy><Settings /></Lazy>} />
           <Route path="/opportunities" element={<Lazy><OpportunityList /></Lazy>} />
-          <Route path="/opportunities/new" element={<Lazy><OpportunityForm /></Lazy>} />
           <Route path="/opportunities/:id" element={<Lazy><OpportunityDetail /></Lazy>} />
-          <Route path="/opportunities/:id/edit" element={<Lazy><OpportunityForm /></Lazy>} />
-          <Route path="/applications" element={<Lazy><ApplicationList /></Lazy>} />
           <Route path="/attachments" element={<Lazy><AttachmentList /></Lazy>} />
           <Route path="/attachments/:id" element={<Lazy><AttachmentDetail /></Lazy>} />
-          <Route path="/attachments/:id/logbooks" element={<Lazy><LogbookList /></Lazy>} />
-          <Route path="/attachments/:id/evaluations" element={<Lazy><EvaluationList /></Lazy>} />
-          <Route path="/logbooks" element={<Lazy><LogbookList /></Lazy>} />
-          <Route path="/evaluations" element={<Lazy><EvaluationList /></Lazy>} />
-          <Route path="/notifications" element={<Lazy><NotificationList /></Lazy>} />
-          <Route path="/reports" element={<Lazy><ReportList /></Lazy>} />
-          <Route path="/settings" element={<Lazy><Settings /></Lazy>} />
 
-          <Route path="/admin/students" element={<Lazy><AdminStudents /></Lazy>} />
-          <Route path="/admin/companies" element={<Lazy><AdminCompanies /></Lazy>} />
-          <Route path="/admin/schools" element={<Lazy><AdminSchools /></Lazy>} />
-          <Route path="/admin/supervisors" element={<Lazy><AdminSupervisors /></Lazy>} />
-          <Route path="/admin/applications" element={<Lazy><AdminApplications /></Lazy>} />
-          <Route path="/admin/opportunities" element={<Lazy><AdminOpportunities /></Lazy>} />
+          {/* Student-only */}
+          <Route path="/profile/student" element={<ProtectedRoute roles={["student"]}><StudentProfile /></ProtectedRoute>} />
+          <Route path="/logbooks" element={<ProtectedRoute roles={["student", "supervisor"]}><LogbookList /></ProtectedRoute>} />
+          <Route path="/attachments/:id/logbooks" element={<ProtectedRoute roles={["student", "supervisor"]}><LogbookList /></ProtectedRoute>} />
+          <Route path="/evaluations" element={<ProtectedRoute roles={["student", "school", "supervisor"]}><EvaluationList /></ProtectedRoute>} />
+          <Route path="/attachments/:id/evaluations" element={<ProtectedRoute roles={["student", "school", "supervisor"]}><EvaluationList /></ProtectedRoute>} />
+
+          {/* Company-only */}
+          <Route path="/profile/company" element={<ProtectedRoute roles={["company"]}><CompanyProfile /></ProtectedRoute>} />
+          <Route path="/opportunities/new" element={<ProtectedRoute roles={["company"]}><OpportunityForm /></ProtectedRoute>} />
+          <Route path="/opportunities/:id/edit" element={<ProtectedRoute roles={["company", "admin"]}><OpportunityForm /></ProtectedRoute>} />
+          <Route path="/applications" element={<ProtectedRoute roles={["student", "company"]}><ApplicationList /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute roles={["admin", "company", "school"]}><ReportList /></ProtectedRoute>} />
+
+          {/* School-only */}
+          <Route path="/profile/school" element={<ProtectedRoute roles={["school"]}><SchoolProfile /></ProtectedRoute>} />
+
+          {/* Supervisor-only */}
+          <Route path="/profile/supervisor" element={<ProtectedRoute roles={["supervisor"]}><SupervisorProfile /></ProtectedRoute>} />
+
+          {/* Admin-only */}
+          <Route path="/admin/students" element={<ProtectedRoute roles={["admin", "school"]}><AdminStudents /></ProtectedRoute>} />
+          <Route path="/admin/companies" element={<ProtectedRoute roles={["admin"]}><AdminCompanies /></ProtectedRoute>} />
+          <Route path="/admin/schools" element={<ProtectedRoute roles={["admin"]}><AdminSchools /></ProtectedRoute>} />
+          <Route path="/admin/supervisors" element={<ProtectedRoute roles={["admin", "school"]}><AdminSupervisors /></ProtectedRoute>} />
+          <Route path="/admin/applications" element={<ProtectedRoute roles={["admin"]}><AdminApplications /></ProtectedRoute>} />
+          <Route path="/admin/opportunities" element={<ProtectedRoute roles={["admin"]}><AdminOpportunities /></ProtectedRoute>} />
         </Route>
       </Route>
 
