@@ -6,7 +6,7 @@ dotenv.config();
 import User from "./src/modules/auth/models/user.model.js";
 
 async function seed() {
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
 
   const existing = await User.findOne({ email: "admin@attachlink.com" });
   if (existing) {
