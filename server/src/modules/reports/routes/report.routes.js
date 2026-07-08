@@ -53,6 +53,7 @@ router.get(
   roleMiddleware("admin", "school", "supervisor"),
   reportController.studentReport
 );
+);
 
 /**
  * @swagger

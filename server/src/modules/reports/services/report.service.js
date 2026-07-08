@@ -6,12 +6,26 @@ import companyRepository from "../../companies/repositories/company.repository.j
 import opportunityRepository from "../../opportunities/repositories/opportunity.repository.js";
 import schoolRepository from "../../schools/repositories/school.repository.js";
 import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
-import { NotFoundError } from "../../../core/errors/index.js";
+import { NotFoundError, ForbiddenError } from "../../../core/errors/index.js";
 
 class ReportService {
-  async studentReport(studentId) {
+  async studentReport(studentId, requestingUser) {
     const student = await studentRepository.findById(studentId);
     if (!student) throw new NotFoundError("Student not found");
+
+    if (requestingUser?.role === "supervisor") {
+      const supervisor = await supervisorRepository.findByUserId(requestingUser.id);
+      if (!supervisor) throw new NotFoundError("Supervisor profile not found");
+
+      const supervisorAttachments = await attachmentRepository.findAllBy(
+        supervisor.supervisorType === "academic" ? "academicSupervisorId" : "industrialSupervisorId",
+        supervisor._id
+      );
+      const hasAccess = supervisorAttachments.some((a) =>
+        a.studentId?._id?.toString() === studentId || a.studentId?.toString() === studentId
+      );
+      if (!hasAccess) throw new ForbiddenError("You can only view reports for students you supervise");
+    }
 
     const attachments = await attachmentRepository.findAllBy("studentId", studentId);
     const attachmentIds = attachments.map((a) => a._id);
@@ -87,9 +101,20 @@ class ReportService {
     };
   }
 
-  async attachmentReport(attachmentId) {
+  async attachmentReport(attachmentId, requestingUser) {
     const attachment = await attachmentRepository.findById(attachmentId);
     if (!attachment) throw new NotFoundError("Attachment not found");
+
+    if (requestingUser?.role === "supervisor") {
+      const supervisor = await supervisorRepository.findByUserId(requestingUser.id);
+      if (!supervisor) throw new NotFoundError("Supervisor profile not found");
+      const isAssigned =
+        attachment.academicSupervisorId?._id?.toString() === supervisor._id.toString() ||
+        attachment.academicSupervisorId?.toString() === supervisor._id.toString() ||
+        attachment.industrialSupervisorId?._id?.toString() === supervisor._id.toString() ||
+        attachment.industrialSupervisorId?.toString() === supervisor._id.toString();
+      if (!isAssigned) throw new ForbiddenError("You can only view reports for attachments you supervise");
+    }
 
     const logbooks = await logbookRepository.findAllBy("attachmentId", attachmentId);
     const evaluations = await evaluationRepository.findAllBy("attachmentId", attachmentId);

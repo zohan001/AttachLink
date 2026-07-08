@@ -4,7 +4,7 @@ import responseBuilder from "../../../core/response/responseBuilder.js";
 class ReportController {
   async studentReport(req, res, next) {
     try {
-      const report = await reportService.studentReport(req.params.id);
+      const report = await reportService.studentReport(req.params.id, req.user);
 
       return responseBuilder.success(res, report, "Student report generated successfully.");
     } catch (error) {
@@ -14,7 +14,7 @@ class ReportController {
 
   async attachmentReport(req, res, next) {
     try {
-      const report = await reportService.attachmentReport(req.params.id);
+      const report = await reportService.attachmentReport(req.params.id, req.user);
 
       return responseBuilder.success(res, report, "Attachment report generated successfully.");
     } catch (error) {
