@@ -134,12 +134,19 @@ class AuthService {
     await user.save();
 
     const resetUrl = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${rawToken}?email=${email}`;
-    sendEmail({
+    const result = await sendEmail({
       to: user.email,
       subject: "Reset your AttachLink password",
-      text: `Reset your password here: ${resetUrl}`,
       html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link expires in 1 hour.</p>`,
     });
+
+    if (result?.sent === false && result?.reason === "domain_not_verified") {
+      return {
+        message: "Email service needs domain setup. Use the link below to reset your password.",
+        resetUrl,
+        devMode: true,
+      };
+    }
 
     return { message: "If that email is registered, a reset link has been sent." };
   }

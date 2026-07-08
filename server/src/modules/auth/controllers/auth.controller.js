@@ -102,7 +102,12 @@ class AuthController {
     try {
       const { email } = req.body;
       const result = await authService.forgotPassword(email);
-      return res.status(200).json({ success: true, message: result.message });
+      const response = { success: true, message: result.message };
+      if (result.devMode) {
+        response.devMode = true;
+        response.resetUrl = result.resetUrl;
+      }
+      return res.status(200).json(response);
     } catch (error) {
       next(error);
     }

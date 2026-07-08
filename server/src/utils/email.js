@@ -1,16 +1,13 @@
 import logger from "./logger.js";
 
-export async function sendEmail({ to, subject, text, html }) {
+export async function sendEmail({ to, subject, html }) {
   if (process.env.RESEND_API_KEY) {
     return sendViaResend({ to, subject, html });
   }
 
-  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
-    return sendViaSMTP({ to, subject, text, html });
-  }
-
-  console.log(`[Email] No provider configured. Would send to ${to}: ${subject}`);
-  console.log(`[Email] Set RESEND_API_KEY or SMTP_HOST/SMTP_USER in env`);
+  console.log(`[Email] No API key configured. Would send to ${to}: ${subject}`);
+  console.log(`[Email] Set RESEND_API_KEY in env`);
+  return { sent: false, reason: "no_provider" };
 }
 
 async function sendViaResend({ to, subject, html }) {
@@ -28,44 +25,22 @@ async function sendViaResend({ to, subject, html }) {
     });
 
     const body = await res.json();
+
     if (res.ok) {
       console.log(`[Email] Sent successfully — id: ${body.id}`);
-    } else {
-      console.error(`[Email] Resend API error (${res.status}): ${JSON.stringify(body)}`);
+      return { sent: true };
     }
+
+    if (res.status === 403 && body.message?.includes("verify a domain")) {
+      console.log(`[Email] Domain not verified — falling back to dev mode`);
+      return { sent: false, reason: "domain_not_verified" };
+    }
+
+    console.error(`[Email] Resend API error (${res.status}): ${JSON.stringify(body)}`);
+    return { sent: false, reason: "api_error", error: body };
   } catch (error) {
     console.error(`[Email] Resend request failed: ${error.message}`);
     logger.error(`[Email] Resend request failed: ${error.message}`);
-  }
-}
-
-async function sendViaSMTP({ to, subject, text, html }) {
-  let nodemailer;
-  try {
-    nodemailer = await import("nodemailer");
-  } catch {
-    console.error("[Email] nodemailer not installed — can't use SMTP");
-    return;
-  }
-
-  const from = process.env.EMAIL_FROM || "noreply@attachlink.com";
-  console.log(`[Email] Sending via SMTP to ${to}: ${subject}`);
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  try {
-    const info = await transporter.sendMail({ from, to, subject, text, html });
-    console.log(`[Email] Sent successfully — id: ${info.messageId}`);
-  } catch (error) {
-    console.error(`[Email] SMTP failed: ${error.message}`);
-    logger.error(`[Email] SMTP failed: ${error.message}`);
+    return { sent: false, reason: "network_error", error: error.message };
   }
 }
