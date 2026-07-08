@@ -38,7 +38,7 @@ const router = Router();
 router.get(
   "/my",
   authMiddleware,
-  roleMiddleware("supervisor"),
+  roleMiddleware("supervisor", "school", "student"),
   evaluationController.getMy
 );
 
@@ -80,7 +80,7 @@ router.get(
 router.get(
   "/attachment/:id",
   authMiddleware,
-  roleMiddleware("admin", "supervisor"),
+  roleMiddleware("admin", "supervisor", "school"),
   evaluationController.getByAttachment
 );
 

@@ -56,13 +56,18 @@ class EvaluationService extends BaseService {
     return evaluation;
   }
 
-  async getMy(supervisorUserId) {
-    const supervisor = await supervisorRepository.findByUserId(supervisorUserId);
-    if (!supervisor) {
-      throw new NotFoundError("Supervisor profile not found");
+  async getMy(userId) {
+    const supervisor = await supervisorRepository.findByUserId(userId);
+    if (supervisor) {
+      return await this.repository.findAllBy("evaluatorId", supervisor._id);
     }
 
-    return await this.repository.findAllBy("evaluatorId", supervisor._id);
+    const student = await studentRepository.findByUserId(userId);
+    if (student) {
+      return await this.repository.findAllBy("studentId", student._id);
+    }
+
+    return [];
   }
 
   async getByAttachment(attachmentId) {
