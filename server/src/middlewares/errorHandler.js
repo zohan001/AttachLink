@@ -1,5 +1,14 @@
+import logger from "../utils/logger.js";
+
 const errorHandler = (err, req, res, next) => {
-  console.error("❌ Error:", err);
+  logger.error("[ErrorHandler]", {
+    message: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip,
+    userId: req.user?.id,
+  });
 
   const statusCode = err.statusCode || 500;
 

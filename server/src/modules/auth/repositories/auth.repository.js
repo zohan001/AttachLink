@@ -18,7 +18,7 @@ class AuthRepository {
   */
 
   async findByEmail(email) {
-    return await User.findOne({ email }).select("+password");
+    return await User.findOne({ email }).select("+password +failedLoginAttempts +lockUntil");
   }
 
   /*
@@ -58,6 +58,19 @@ class AuthRepository {
     if (!user) return null;
     user.password = newPassword;
     return await user.save();
+  }
+
+  async incrementFailedAttempts(id) {
+    return await User.findByIdAndUpdate(id, { $inc: { failedLoginAttempts: 1 } });
+  }
+
+  async resetFailedAttempts(id) {
+    return await User.findByIdAndUpdate(id, { failedLoginAttempts: 0, lockUntil: null });
+  }
+
+  async lockAccount(id, minutes) {
+    const lockUntil = new Date(Date.now() + minutes * 60 * 1000);
+    return await User.findByIdAndUpdate(id, { failedLoginAttempts: 0, lockUntil });
   }
 }
 

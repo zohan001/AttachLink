@@ -1,4 +1,5 @@
 import EventBus from "./EventBus.js";
+import logger from "../../utils/logger.js";
 import notificationService from "../../modules/notifications/services/notification.service.js";
 import attachmentRepository from "../../modules/attachments/repositories/attachment.repository.js";
 import supervisorRepository from "../../modules/supervisors/repositories/supervisor.repository.js";
@@ -20,7 +21,7 @@ export function registerEventListeners() {
         );
       }
     } catch (error) {
-      console.error("[EventBus] Error handling attachment.created:", error.message);
+      logger.error("[EventBus] Error handling attachment.created:", error.message);
     }
   });
 
@@ -64,7 +65,7 @@ export function registerEventListeners() {
         );
       }
     } catch (error) {
-      console.error("[EventBus] Error handling logbook.submitted:", error.message);
+      logger.error("[EventBus] Error handling logbook.submitted:", error.message);
     }
   });
 
@@ -86,7 +87,7 @@ export function registerEventListeners() {
         );
       }
     } catch (error) {
-      console.error("[EventBus] Error handling logbook.approved:", error.message);
+      logger.error("[EventBus] Error handling logbook.approved:", error.message);
     }
   });
 
@@ -108,9 +109,9 @@ export function registerEventListeners() {
         );
       }
     } catch (error) {
-      console.error("[EventBus] Error handling evaluation.submitted:", error.message);
+      logger.error("[EventBus] Error handling evaluation.submitted:", error.message);
     }
   });
 
-  console.log("[EventBus] Event listeners registered.");
+  logger.info("[EventBus] Event listeners registered.");
 }

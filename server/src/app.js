@@ -11,6 +11,7 @@ import { swaggerSpec } from "./config/swagger.js";
 import routes from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import { apiLimiter, authLimiter } from "./middlewares/rateLimiter.js";
+import auditLogger from "./middlewares/auditLogger.js";
 
 const app = express();
 
@@ -64,6 +65,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Audit logging for admin write actions
+app.use("/api/v1", auditLogger);
 
 app.use("/api/v1", routes);
 

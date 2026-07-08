@@ -7,6 +7,11 @@ import Loading from "./components/common/Loading";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import Dashboard from "./pages/Dashboard";
 
 const StudentProfile = lazy(() => import("./pages/student/Profile"));
@@ -46,6 +51,11 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+      <Route path="/reset-password/:token" element={<GuestRoute><ResetPassword /></GuestRoute>} />
+      <Route path="/verify-email" element={<GuestRoute><VerifyEmail /></GuestRoute>} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>

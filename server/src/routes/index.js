@@ -14,6 +14,7 @@ import reportRoutes from "../modules/reports/routes/report.routes.js";
 import notificationRoutes from "../modules/notifications/routes/notification.routes.js";
 import analyticsRoutes from "../modules/analytics/routes/analytics.routes.js";
 import dashboardRoutes from "../modules/dashboard/routes/dashboard.routes.js";
+import auditLogRoutes from "../modules/auditLogs/routes/auditLog.routes.js";
 
 const router = Router();
 
@@ -143,5 +144,7 @@ router.use("/analytics", analyticsRoutes);
 */
 
 router.use("/dashboard", dashboardRoutes);
+
+router.use("/audit-logs", auditLogRoutes);
 
 export default router;

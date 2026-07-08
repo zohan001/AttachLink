@@ -54,6 +54,10 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-gray-200 py-8 text-center text-sm text-gray-400">
+        <div className="flex justify-center gap-6 mb-2">
+          <Link to="/privacy" className="hover:text-gray-600">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-gray-600">Terms of Service</Link>
+        </div>
         AttachLink &copy; {new Date().getFullYear()}
       </footer>
     </div>

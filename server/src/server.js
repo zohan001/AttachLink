@@ -4,6 +4,7 @@ dotenv.config();
 import app from "./app.js";
 import connectDatabase from "./config/database.js";
 import { registerEventListeners } from "./core/events/registerListeners.js";
+import logger from "./utils/logger.js";
 
 const PORT = process.env.PORT || 5000;
 
@@ -13,16 +14,10 @@ const startServer = async () => {
     registerEventListeners();
 
     app.listen(PORT, () => {
-      console.log(`
-================================================
-🚀 AttachLink API is running
-🌐 Environment : ${process.env.NODE_ENV}
-📡 Server      : http://localhost:${PORT}
-================================================
-      `);
+      logger.info(`AttachLink API running — Env: ${process.env.NODE_ENV}, Port: ${PORT}`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error);
+    logger.error("Failed to start server:", error.message);
   }
 };
 
