@@ -121,7 +121,7 @@ router.post(
  */
 router.get(
   "/",
-  roleMiddleware("admin", "school", "company"),
+  roleMiddleware("admin", "school", "company", "supervisor"),
   studentController.getAll
 );
 

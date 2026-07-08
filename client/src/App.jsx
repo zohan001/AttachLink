@@ -69,7 +69,7 @@ export default function App() {
           <Route path="/opportunities/new" element={<ProtectedRoute roles={["company"]}><OpportunityForm /></ProtectedRoute>} />
           <Route path="/opportunities/:id/edit" element={<ProtectedRoute roles={["company", "admin"]}><OpportunityForm /></ProtectedRoute>} />
           <Route path="/applications" element={<ProtectedRoute roles={["student", "company"]}><ApplicationList /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute roles={["admin", "company", "school"]}><ReportList /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute roles={["admin", "company", "school", "supervisor"]}><ReportList /></ProtectedRoute>} />
 
           {/* School-only */}
           <Route path="/profile/school" element={<ProtectedRoute roles={["school"]}><SchoolProfile /></ProtectedRoute>} />
