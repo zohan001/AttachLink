@@ -44,7 +44,7 @@ class AuthRepository {
         lastLogin: new Date(),
       },
       {
-        new: true,
+        returnDocument: "after",
       }
     );
   }

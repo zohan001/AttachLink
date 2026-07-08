@@ -58,11 +58,11 @@ class ApplicationRepository {
       update.shortlisted = true;
     }
 
-    return await Application.findByIdAndUpdate(id, update, { new: true }).populate(populateFields);
+    return await Application.findByIdAndUpdate(id, update, { returnDocument: "after" }).populate(populateFields);
   }
 
   async update(id, data) {
-    return await Application.findByIdAndUpdate(id, data, { new: true }).populate(populateFields);
+    return await Application.findByIdAndUpdate(id, data, { returnDocument: "after" }).populate(populateFields);
   }
 
   async delete(id) {

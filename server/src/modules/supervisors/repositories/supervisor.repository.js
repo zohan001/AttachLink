@@ -38,7 +38,7 @@ class SupervisorRepository {
 
   async update(id, data) {
     return await Supervisor.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     })
       .populate("userId", "firstName lastName email avatar")

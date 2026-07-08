@@ -23,7 +23,7 @@ class StudentRepository {
 
   async update(id, data) {
     return await Student.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     }).populate("userId", "firstName lastName email avatar");
   }

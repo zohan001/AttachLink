@@ -87,7 +87,7 @@ class OpportunityRepository {
 
   async update(id, data) {
     return await Opportunity.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     }).populate("companyId", "companyName logo city industry");
   }

@@ -32,7 +32,7 @@ class BaseRepository {
 
   async update(id, data) {
     let query = this.model.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     });
     if (this.populateFields.length) {
