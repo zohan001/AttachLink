@@ -61,7 +61,7 @@ export default function ReportList() {
         <div className="flex flex-wrap gap-4 mb-6">
           <select value={type} onChange={(e) => { setType(e.target.value); setSelectedId(""); }} className="input max-w-xs">
             <option value="student">Student Report</option>
-            <option value="company">Company Report</option>
+            {user?.role === "admin" && <option value="company">Company Report</option>}
             <option value="attachment">Attachment Report</option>
           </select>
           <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} className="input max-w-xs">

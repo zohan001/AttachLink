@@ -20,7 +20,7 @@ class StudentController {
 
   async getAll(req, res, next) {
     try {
-      const students = await studentService.getAll();
+      const students = await studentService.getAll(req.query, req.user);
 
       return res.status(200).json({
         success: true,

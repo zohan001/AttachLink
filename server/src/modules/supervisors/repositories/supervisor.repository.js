@@ -5,8 +5,8 @@ class SupervisorRepository {
     return await Supervisor.create(data);
   }
 
-  async findAll() {
-    return await Supervisor.find()
+  async findAll(filters = {}) {
+    return await Supervisor.find(filters)
       .populate("userId", "firstName lastName email avatar")
       .populate("schoolId", "schoolName abbreviation")
       .populate("companyId", "companyName logo");

@@ -20,7 +20,7 @@ class SupervisorController {
 
   async getAll(req, res, next) {
     try {
-      const supervisors = await supervisorService.getAll();
+      const supervisors = await supervisorService.getAll(req.query, req.user);
 
       return res.status(200).json({
         success: true,

@@ -17,7 +17,7 @@ class AttachmentController {
 
   async getAll(req, res, next) {
     try {
-      const attachments = await attachmentService.getAll();
+      const attachments = await attachmentService.getAll({}, req.user);
 
       return responseBuilder.success(res, attachments, "Attachments retrieved successfully.");
     } catch (error) {

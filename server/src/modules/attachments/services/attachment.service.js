@@ -2,12 +2,25 @@ import BaseService from "../../../core/services/BaseService.js";
 import attachmentRepository from "../repositories/attachment.repository.js";
 import applicationRepository from "../../applications/repositories/application.repository.js";
 import studentRepository from "../../students/repositories/student.repository.js";
-import { AppError, ForbiddenError, ConflictError } from "../../../core/errors/index.js";
+import schoolRepository from "../../schools/repositories/school.repository.js";
+import { AppError, ForbiddenError, ConflictError, NotFoundError } from "../../../core/errors/index.js";
 import EventBus from "../../../core/events/EventBus.js";
 
 class AttachmentService extends BaseService {
   constructor() {
     super(attachmentRepository, "Attachment");
+  }
+
+  async getAll(filters = {}, requestingUser) {
+    if (requestingUser?.role === "school") {
+      const school = await schoolRepository.findByUserId(requestingUser.id);
+      if (school) {
+        const students = await studentRepository.findAll({ schoolId: school._id });
+        const studentIds = students.map((s) => s._id);
+        filters.studentId = { $in: studentIds };
+      }
+    }
+    return await this.repository.findAll(filters);
   }
 
   async createFromAcceptedApplication(userId, data) {

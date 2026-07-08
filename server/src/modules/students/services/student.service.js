@@ -1,4 +1,5 @@
 import studentRepository from "../repositories/student.repository.js";
+import schoolRepository from "../../schools/repositories/school.repository.js";
 
 class StudentService {
   async createProfile(userId, profileData) {
@@ -24,7 +25,11 @@ class StudentService {
     return student;
   }
 
-  async getAll(query = {}) {
+  async getAll(query = {}, requestingUser) {
+    if (requestingUser?.role === "school") {
+      const school = await schoolRepository.findByUserId(requestingUser.id);
+      if (school) query.schoolId = school._id;
+    }
     return await studentRepository.findAll(query);
   }
 

@@ -38,8 +38,12 @@ class SupervisorService {
     return await supervisorRepository.create({ userId, ...data });
   }
 
-  async getAll() {
-    return await supervisorRepository.findAll();
+  async getAll(query = {}, requestingUser) {
+    if (requestingUser?.role === "school") {
+      const school = await schoolRepository.findByUserId(requestingUser.id);
+      if (school) query.schoolId = school._id;
+    }
+    return await supervisorRepository.findAll(query);
   }
 
   async getById(id) {
