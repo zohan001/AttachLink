@@ -6,6 +6,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/jwt.js";
+import { sendEmail } from "../../../utils/email.js";
 
 class AuthService {
   /*
@@ -29,7 +30,12 @@ class AuthService {
     });
 
     const verifyUrl = `${process.env.CLIENT_URL || "http://localhost:3000"}/verify-email?token=${rawToken}&email=${user.email}`;
-    console.log(`[DEV] Email verification link: ${verifyUrl}`);
+    sendEmail({
+      to: user.email,
+      subject: "Verify your AttachLink email",
+      text: `Welcome to AttachLink! Verify your email here: ${verifyUrl}`,
+      html: `<p>Welcome to AttachLink!</p><p><a href="${verifyUrl}">Verify your email address</a></p>`,
+    });
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
@@ -128,7 +134,12 @@ class AuthService {
     await user.save();
 
     const resetUrl = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${rawToken}?email=${email}`;
-    console.log(`[DEV] Password reset link: ${resetUrl}`);
+    sendEmail({
+      to: user.email,
+      subject: "Reset your AttachLink password",
+      text: `Reset your password here: ${resetUrl}`,
+      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link expires in 1 hour.</p>`,
+    });
 
     return { message: "If that email is registered, a reset link has been sent." };
   }
