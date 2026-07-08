@@ -1,76 +1,71 @@
-import nodemailer from "nodemailer";
 import logger from "./logger.js";
 
-function createTransport() {
-  console.log(`[Email] Checking env vars: RESEND_API_KEY=${process.env.RESEND_API_KEY ? "SET" : "NOT SET"}, SMTP_HOST=${process.env.SMTP_HOST || "NOT SET"}`);
+export async function sendEmail({ to, subject, text, html }) {
+  if (process.env.RESEND_API_KEY) {
+    return sendViaResend({ to, subject, html });
+  }
 
   if (process.env.SMTP_HOST && process.env.SMTP_USER) {
-    console.log("[Email] Using SMTP provider");
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    return sendViaSMTP({ to, subject, text, html });
   }
 
-  if (process.env.RESEND_API_KEY) {
-    console.log("[Email] Using Resend SMTP");
-    return nodemailer.createTransport({
-      host: "smtp.resend.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "resend",
-        pass: process.env.RESEND_API_KEY,
-      },
-    });
-  }
-
-  if (process.env.SENDGRID_API_KEY) {
-    console.log("[Email] Using SendGrid SMTP");
-    return nodemailer.createTransport({
-      host: "smtp.sendgrid.net",
-      port: 587,
-      auth: {
-        user: "apikey",
-        pass: process.env.SENDGRID_API_KEY,
-      },
-    });
-  }
-
-  console.log("[Email] No email provider configured!");
-  return null;
+  console.log(`[Email] No provider configured. Would send to ${to}: ${subject}`);
+  console.log(`[Email] Set RESEND_API_KEY or SMTP_HOST/SMTP_USER in env`);
 }
 
-let _transporter = null;
+async function sendViaResend({ to, subject, html }) {
+  const from = process.env.EMAIL_FROM || "AttachLink <onboarding@resend.dev>";
+  console.log(`[Email] Sending via Resend API to ${to}: ${subject}`);
 
-async function getTransporter() {
-  if (!_transporter) {
-    _transporter = createTransport();
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to, subject, html }),
+    });
+
+    const body = await res.json();
+    if (res.ok) {
+      console.log(`[Email] Sent successfully — id: ${body.id}`);
+    } else {
+      console.error(`[Email] Resend API error (${res.status}): ${JSON.stringify(body)}`);
+    }
+  } catch (error) {
+    console.error(`[Email] Resend request failed: ${error.message}`);
+    logger.error(`[Email] Resend request failed: ${error.message}`);
   }
-  return _transporter;
 }
 
-export async function sendEmail({ to, subject, text, html }) {
-  const transporter = await getTransporter();
-
-  if (!transporter) {
-    console.log(`[Email] Would send to ${to}: ${subject} — no provider configured`);
+async function sendViaSMTP({ to, subject, text, html }) {
+  let nodemailer;
+  try {
+    nodemailer = await import("nodemailer");
+  } catch {
+    console.error("[Email] nodemailer not installed — can't use SMTP");
     return;
   }
 
   const from = process.env.EMAIL_FROM || "noreply@attachlink.com";
-  console.log(`[Email] Sending to ${to}: ${subject} (from: ${from})`);
+  console.log(`[Email] Sending via SMTP to ${to}: ${subject}`);
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 
   try {
     const info = await transporter.sendMail({ from, to, subject, text, html });
     console.log(`[Email] Sent successfully — id: ${info.messageId}`);
   } catch (error) {
-    console.error(`[Email] Failed to send: ${error.message}`);
-    logger.error(`[Email] Failed to send to ${to}: ${error.message}`);
+    console.error(`[Email] SMTP failed: ${error.message}`);
+    logger.error(`[Email] SMTP failed: ${error.message}`);
   }
 }
