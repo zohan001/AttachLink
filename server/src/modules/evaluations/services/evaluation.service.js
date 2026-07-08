@@ -2,6 +2,7 @@ import evaluationRepository from "../repositories/evaluation.repository.js";
 import attachmentRepository from "../../attachments/repositories/attachment.repository.js";
 import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
 import studentRepository from "../../students/repositories/student.repository.js";
+import notificationService from "../../notifications/services/notification.service.js";
 import BaseService from "../../../core/services/BaseService.js";
 import {
   AppError,
@@ -52,6 +53,16 @@ class EvaluationService extends BaseService {
       generalComments: data.generalComments || "",
       recommendation: data.recommendation || null,
     });
+
+    const studentUserId = attachment.studentId?.userId?._id
+      || attachment.studentId?.userId
+      || attachment.studentId._id
+      || attachment.studentId;
+    notificationService.notify(
+      studentUserId,
+      "New Evaluation",
+      `You have received a new evaluation from your ${supervisor.supervisorType} supervisor`
+    );
 
     return evaluation;
   }
