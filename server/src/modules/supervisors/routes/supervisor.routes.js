@@ -39,7 +39,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/PaginatedResponse'
  */
-router.get("/", supervisorController.getAll);
+router.get("/", authMiddleware, roleMiddleware("admin", "school"), supervisorController.getAll);
 
 /**
  * @swagger
