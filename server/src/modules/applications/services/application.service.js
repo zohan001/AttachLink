@@ -3,6 +3,7 @@ import studentRepository from "../../students/repositories/student.repository.js
 import companyRepository from "../../companies/repositories/company.repository.js";
 import opportunityRepository from "../../opportunities/repositories/opportunity.repository.js";
 import notificationService from "../../notifications/services/notification.service.js";
+import attachmentRepository from "../../attachments/repositories/attachment.repository.js";
 import {
   NotFoundError,
   ForbiddenError,
@@ -190,6 +191,18 @@ class ApplicationService {
       "Application Updated",
       `Your application status has been updated to "${status}"`
     );
+
+    if (status === "Accepted") {
+      const existing = await attachmentRepository.findBy("applicationId", id);
+      if (!existing) {
+        await attachmentRepository.create({
+          applicationId: id,
+          studentId: application.studentId._id || application.studentId,
+          opportunityId: application.opportunityId._id || application.opportunityId,
+          companyId: application.companyId._id || application.companyId,
+        });
+      }
+    }
 
     return updated;
   }
