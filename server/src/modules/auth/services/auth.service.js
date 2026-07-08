@@ -40,6 +40,25 @@ class AuthService {
   |--------------------------------------------------------------------------
   */
 
+  async updatePassword(userId, currentPassword, newPassword) {
+    const user = await authRepository.findByIdWithPassword(userId);
+    if (!user) {
+      const err = new Error("User not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      const err = new Error("Current password is incorrect");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    await authRepository.updatePassword(userId, newPassword);
+    return { message: "Password updated successfully" };
+  }
+
   async login(email, password) {
     const user = await authRepository.findByEmail(email);
 

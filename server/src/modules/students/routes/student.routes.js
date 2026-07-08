@@ -190,7 +190,7 @@ router.get(
  */
 router.get(
   "/:id",
-  roleMiddleware("student", "admin", "school", "supervisor"),
+  roleMiddleware("student", "admin", "school", "supervisor", "company"),
   studentController.getById
 );
 

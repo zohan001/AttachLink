@@ -48,6 +48,17 @@ class AuthRepository {
       }
     );
   }
+
+  async findByIdWithPassword(id) {
+    return await User.findById(id).select("+password");
+  }
+
+  async updatePassword(id, newPassword) {
+    const user = await User.findById(id);
+    if (!user) return null;
+    user.password = newPassword;
+    return await user.save();
+  }
 }
 
 export default new AuthRepository();

@@ -8,6 +8,7 @@ import {
 } from "../validators/auth.validator.js";
 
 import validate from "../../../middlewares/validateRequest.js";
+import authMiddleware from "../../../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -104,6 +105,12 @@ router.post(
   loginValidator,
   validate,
   authController.login
+);
+
+router.put(
+  "/update-password",
+  authMiddleware,
+  authController.updatePassword
 );
 
 export default router;
