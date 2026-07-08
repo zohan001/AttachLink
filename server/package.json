@@ -7,6 +7,7 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed": "node seed.js",
+    "backfill-attachments": "node backfill-attachments.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
