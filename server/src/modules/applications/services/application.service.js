@@ -60,8 +60,9 @@ class ApplicationService {
       cvUrl: data.cvUrl || "",
     });
 
+    const oppCompany = await companyRepository.findById(opportunity.companyId._id || opportunity.companyId);
     notificationService.notify(
-      opportunity.companyId._id || opportunity.companyId,
+      oppCompany.userId._id || oppCompany.userId,
       "New Application",
       `A student has applied for ${opportunity.title}`
     );
@@ -96,8 +97,9 @@ class ApplicationService {
       throw new AppError(`Cannot withdraw an application with status "${application.status}"`, 400);
     }
 
+    const withdrawCompany = await companyRepository.findById(application.companyId._id || application.companyId);
     notificationService.notify(
-      application.companyId._id || application.companyId,
+      withdrawCompany.userId._id || withdrawCompany.userId,
       "Application Withdrawn",
       `A student has withdrawn their application`
     );
@@ -182,9 +184,10 @@ class ApplicationService {
 
     const updated = await applicationRepository.update(id, updateData);
 
-    const studentUserId = application.studentId._id
-      ? application.studentId._id
-      : application.studentId;
+    const studentUserId = application.studentId?.userId?._id
+      || application.studentId?.userId
+      || application.studentId._id
+      || application.studentId;
 
     notificationService.notify(
       studentUserId,
