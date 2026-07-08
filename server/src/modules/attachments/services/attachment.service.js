@@ -3,6 +3,7 @@ import attachmentRepository from "../repositories/attachment.repository.js";
 import applicationRepository from "../../applications/repositories/application.repository.js";
 import studentRepository from "../../students/repositories/student.repository.js";
 import schoolRepository from "../../schools/repositories/school.repository.js";
+import companyRepository from "../../companies/repositories/company.repository.js";
 import { AppError, ForbiddenError, ConflictError, NotFoundError } from "../../../core/errors/index.js";
 import EventBus from "../../../core/events/EventBus.js";
 
@@ -19,6 +20,10 @@ class AttachmentService extends BaseService {
         const studentIds = students.map((s) => s._id);
         filters.studentId = { $in: studentIds };
       }
+    }
+    if (requestingUser?.role === "company") {
+      const company = await companyRepository.findByUserId(requestingUser.id);
+      if (company) filters.companyId = company._id;
     }
     return await this.repository.findAll(filters);
   }

@@ -50,9 +50,8 @@ const router = Router();
 router.get(
   "/students/:id",
   authMiddleware,
-  roleMiddleware("admin", "school", "supervisor"),
+  roleMiddleware("admin", "school", "supervisor", "company"),
   reportController.studentReport
-);
 );
 
 /**

@@ -60,7 +60,7 @@ const router = Router();
 router.get(
   "/",
   authMiddleware,
-  roleMiddleware("admin", "school", "supervisor"),
+  roleMiddleware("admin", "school", "supervisor", "company"),
   attachmentController.getAll
 );
 

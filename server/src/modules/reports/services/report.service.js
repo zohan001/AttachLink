@@ -21,6 +21,16 @@ class ReportService {
       }
     }
 
+    if (requestingUser?.role === "company") {
+      const company = await companyRepository.findByUserId(requestingUser.id);
+      if (!company) throw new NotFoundError("Company profile not found");
+      const attachments = await attachmentRepository.findAllBy("studentId", studentId);
+      const belongsToCompany = attachments.some(
+        (a) => a.companyId?._id?.toString() === company._id.toString() || a.companyId?.toString() === company._id.toString()
+      );
+      if (!belongsToCompany) throw new ForbiddenError("You can only view reports for students who applied to your company");
+    }
+
     if (requestingUser?.role === "supervisor") {
       const supervisor = await supervisorRepository.findByUserId(requestingUser.id);
       if (!supervisor) throw new NotFoundError("Supervisor profile not found");
@@ -122,6 +132,15 @@ class ReportService {
       if (!student) throw new NotFoundError("Student not found");
       if (student.schoolId?._id?.toString() !== school._id.toString() && student.schoolId?.toString() !== school._id.toString()) {
         throw new ForbiddenError("You can only view reports for attachments from students in your school");
+      }
+    }
+
+    if (requestingUser?.role === "company") {
+      const company = await companyRepository.findByUserId(requestingUser.id);
+      if (!company) throw new NotFoundError("Company profile not found");
+      const attachmentCompanyId = attachment.companyId?._id?.toString() || attachment.companyId?.toString();
+      if (attachmentCompanyId !== company._id.toString()) {
+        throw new ForbiddenError("You can only view reports for your company's attachments");
       }
     }
 
