@@ -15,7 +15,7 @@ import notificationRoutes from "../modules/notifications/routes/notification.rou
 import analyticsRoutes from "../modules/analytics/routes/analytics.routes.js";
 import dashboardRoutes from "../modules/dashboard/routes/dashboard.routes.js";
 import auditLogRoutes from "../modules/auditLogs/routes/auditLog.routes.js";
-import uploadRoutes from "../modules/uploads/routes/upload.routes.js";
+import uploadRoutes from "../modules/fileUploads/routes/upload.routes.js";
 
 const router = Router();
 
