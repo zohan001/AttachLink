@@ -20,7 +20,7 @@ function EditModal({ att, open, onClose }) {
 
   const { data: supervisorsData } = useQuery({
     queryKey: ["supervisors-all"],
-    queryFn: () => getSupervisors({ limit: 200 }),
+    queryFn: () => getSupervisors({}),
   });
   const supervisors = supervisorsData?.data || [];
 
