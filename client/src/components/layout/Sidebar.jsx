@@ -27,6 +27,7 @@ const roleLinks = {
     { to: "/admin/supervisors", label: "Supervisors", icon: UserCheck },
     { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
     { to: "/admin/applications", label: "Applications", icon: FileText },
+    { to: "/attachments", label: "Attachments", icon: Briefcase },
     { to: "/reports", label: "Reports", icon: BarChart3 },
     { to: "/notifications", label: "Notifications", icon: Bell },
     { to: "/settings", label: "Settings", icon: Settings },
