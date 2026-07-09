@@ -8,3 +8,4 @@ export const completeAttachment = (id) => api.patch(`/attachments/${id}/complete
 export const terminateAttachment = (id) => api.patch(`/attachments/${id}/terminate`).then((r) => r.data.data);
 export const assignSupervisor = (id, field, supervisorId) =>
   api.patch(`/attachments/${id}/assign-supervisor/${field}`, { supervisorId }).then((r) => r.data.data);
+export const updateAttachment = (id, data) => api.put(`/attachments/${id}`, data).then((r) => r.data.data);
