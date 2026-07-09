@@ -7,6 +7,7 @@ import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
+import UploadField from "../../components/common/UploadField";
 
 const schema = z.object({
   admissionNumber: z.string().min(1, "Required"),
@@ -53,6 +54,15 @@ export default function StudentProfile() {
     onError: (err) => handleApiError(err),
   });
 
+  const cvMutation = useMutation({
+    mutationFn: (url) => api.put(`/students/${profile._id}`, { cvUrl: url }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-student-profile"] });
+      toast.success("CV updated");
+    },
+    onError: (err) => handleApiError(err),
+  });
+
   if (isLoading) return <Loading />;
 
   return (
@@ -92,6 +102,15 @@ export default function StudentProfile() {
               <input type="text" {...register("nationalId")} className="input" />
             </FormField>
           </div>
+
+          <UploadField
+            folder="cvs"
+            accept=".pdf,.doc,.docx"
+            label="Upload CV (PDF, DOC, DOCX)"
+            currentUrl={profile?.cvUrl}
+            onUpload={(url) => url && cvMutation.mutate(url)}
+          />
+
           <button type="submit" disabled={isSubmitting} className="btn-primary">
             {isSubmitting ? "Saving..." : profile?._id ? "Update Profile" : "Create Profile"}
           </button>

@@ -9,6 +9,7 @@ import { updateUser } from "../../store/authSlice";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
+import UploadField from "../../components/common/UploadField";
 
 const schema = z.object({
   companyName: z.string().min(1, "Company name is required"),
@@ -66,6 +67,15 @@ export default function CompanyProfile() {
     onError: (err) => handleApiError(err),
   });
 
+  const logoMutation = useMutation({
+    mutationFn: (url) => api.put(`/companies/${profile._id}`, { logo: url }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-company-profile"] });
+      toast.success("Logo updated");
+    },
+    onError: (err) => handleApiError(err),
+  });
+
   if (isLoading) return <Loading />;
 
   return (
@@ -109,6 +119,15 @@ export default function CompanyProfile() {
               </FormField>
             </div>
           </div>
+
+          <UploadField
+            folder="logos"
+            accept="image/*"
+            label="Company Logo"
+            currentUrl={profile?.logo}
+            onUpload={(url) => url && logoMutation.mutate(url)}
+          />
+
           <button type="submit" disabled={isSubmitting} className="btn-primary">
             {isSubmitting ? "Saving..." : profile?._id ? "Update Profile" : "Create Profile"}
           </button>

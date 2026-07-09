@@ -7,6 +7,7 @@ import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
+import UploadField from "../../components/common/UploadField";
 
 const schema = z.object({
   schoolName: z.string().min(1, "Required"),
@@ -47,6 +48,15 @@ export default function SchoolProfile() {
     onError: (err) => handleApiError(err),
   });
 
+  const logoMutation = useMutation({
+    mutationFn: (url) => api.put(`/schools/${profile._id}`, { logo: url }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-school-profile"] });
+      toast.success("Logo updated");
+    },
+    onError: (err) => handleApiError(err),
+  });
+
   if (isLoading) return <Loading />;
 
   return (
@@ -79,6 +89,15 @@ export default function SchoolProfile() {
               </FormField>
             </div>
           </div>
+
+          <UploadField
+            folder="logos"
+            accept="image/*"
+            label="School Logo"
+            currentUrl={profile?.logo}
+            onUpload={(url) => url && logoMutation.mutate(url)}
+          />
+
           <button type="submit" disabled={isSubmitting} className="btn-primary">
             {isSubmitting ? "Saving..." : profile?._id ? "Update Profile" : "Create Profile"}
           </button>
