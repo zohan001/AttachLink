@@ -22,7 +22,7 @@ function EditModal({ att, open, onClose }) {
     queryKey: ["supervisors-all"],
     queryFn: () => getSupervisors({ limit: 200 }),
   });
-  const supervisors = supervisorsData?.data?.items || [];
+  const supervisors = supervisorsData?.data || [];
 
   const saveMut = useMutation({
     mutationFn: async () => {
@@ -74,7 +74,7 @@ function EditModal({ att, open, onClose }) {
           <select value={industrialId} onChange={(e) => setIndustrialId(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
             <option value="">— None —</option>
-            {supervisors.filter((s) => s.supervisorType === "industry").map((s) => (
+              {supervisors.filter((s) => s.supervisorType === "industrial").map((s) => (
               <option key={s._id} value={s._id}>{s.userId?.firstName} {s.userId?.lastName}</option>
             ))}
           </select>
