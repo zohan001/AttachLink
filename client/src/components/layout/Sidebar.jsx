@@ -95,6 +95,12 @@ export default function Sidebar() {
         className={`fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-transform duration-200 w-64
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
+        <div className="px-4 py-3 border-b border-gray-100 mb-2">
+          <p className="text-sm font-medium text-gray-900 truncate">
+            {user?.firstName} {user?.lastName}
+          </p>
+          <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+        </div>
         <nav className="p-4 space-y-1">
           {links.map((link) => (
             <NavLink

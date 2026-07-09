@@ -20,6 +20,11 @@ export default function AdminSchools() {
   const pagination = data?.data?.pagination || data?.pagination;
 
   const columns = [
+    {
+      key: "logo",
+      label: "",
+      render: (r) => r.logo ? <img src={r.logo} alt="" className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-gray-100" />,
+    },
     { key: "schoolName", label: "School" },
     { key: "institutionType", label: "Type" },
     { key: "email", label: "Email" },

@@ -20,6 +20,11 @@ export default function AdminCompanies() {
   const pagination = data?.data?.pagination || data?.pagination;
 
   const columns = [
+    {
+      key: "logo",
+      label: "",
+      render: (r) => r.logo ? <img src={r.logo} alt="" className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-gray-100" />,
+    },
     { key: "companyName", label: "Company" },
     { key: "industry", label: "Industry" },
     { key: "email", label: "Email" },
