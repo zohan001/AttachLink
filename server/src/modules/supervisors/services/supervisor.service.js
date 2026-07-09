@@ -11,6 +11,10 @@ class SupervisorService {
       throw new ConflictError("Supervisor profile already exists");
     }
 
+    // Strip empty ObjectId strings that Mongoose can't cast
+    if (data.companyId === "") data.companyId = undefined;
+    if (data.schoolId === "") data.schoolId = undefined;
+
     if (data.supervisorType === "academic") {
       if (!data.schoolId) {
         throw new AppError("Academic supervisors must have a school ID", 400);
@@ -67,6 +71,10 @@ class SupervisorService {
   }
 
   async updateProfile(id, data, requestingUserId, requestingUserRole) {
+    // Strip empty ObjectId strings that Mongoose can't cast
+    if (data.companyId === "") data.companyId = undefined;
+    if (data.schoolId === "") data.schoolId = undefined;
+
     const supervisor = await supervisorRepository.findById(id);
 
     if (!supervisor) {
