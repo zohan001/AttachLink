@@ -4,7 +4,6 @@ import logbookRepository from "../../logbooks/repositories/logbook.repository.js
 import evaluationRepository from "../../evaluations/repositories/evaluation.repository.js";
 import companyRepository from "../../companies/repositories/company.repository.js";
 import opportunityRepository from "../../opportunities/repositories/opportunity.repository.js";
-import schoolRepository from "../../schools/repositories/school.repository.js";
 import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
 import { NotFoundError, ForbiddenError } from "../../../core/errors/index.js";
 
@@ -12,14 +11,6 @@ class ReportService {
   async studentReport(studentId, requestingUser) {
     const student = await studentRepository.findById(studentId);
     if (!student) throw new NotFoundError("Student not found");
-
-    if (requestingUser?.role === "school") {
-      const school = await schoolRepository.findByUserId(requestingUser.id);
-      if (!school) throw new NotFoundError("School profile not found");
-      if (student.schoolId?._id?.toString() !== school._id.toString() && student.schoolId?.toString() !== school._id.toString()) {
-        throw new ForbiddenError("You can only view reports for students from your school");
-      }
-    }
 
     if (requestingUser?.role === "company") {
       const company = await companyRepository.findByUserId(requestingUser.id);
@@ -122,18 +113,6 @@ class ReportService {
   async attachmentReport(attachmentId, requestingUser) {
     const attachment = await attachmentRepository.findById(attachmentId);
     if (!attachment) throw new NotFoundError("Attachment not found");
-
-    if (requestingUser?.role === "school") {
-      const school = await schoolRepository.findByUserId(requestingUser.id);
-      if (!school) throw new NotFoundError("School profile not found");
-      const student = await studentRepository.findById(
-        attachment.studentId?._id || attachment.studentId
-      );
-      if (!student) throw new NotFoundError("Student not found");
-      if (student.schoolId?._id?.toString() !== school._id.toString() && student.schoolId?.toString() !== school._id.toString()) {
-        throw new ForbiddenError("You can only view reports for attachments from students in your school");
-      }
-    }
 
     if (requestingUser?.role === "company") {
       const company = await companyRepository.findByUserId(requestingUser.id);

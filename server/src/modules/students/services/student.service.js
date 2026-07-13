@@ -26,10 +26,6 @@ class StudentService {
   }
 
   async getAll(query = {}, requestingUser) {
-    if (requestingUser?.role === "school") {
-      const school = await schoolRepository.findByUserId(requestingUser.id);
-      if (school) query.schoolId = school._id;
-    }
     return await studentRepository.findAll(query);
   }
 

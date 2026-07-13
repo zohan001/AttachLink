@@ -2,7 +2,6 @@ import BaseService from "../../../core/services/BaseService.js";
 import attachmentRepository from "../repositories/attachment.repository.js";
 import applicationRepository from "../../applications/repositories/application.repository.js";
 import studentRepository from "../../students/repositories/student.repository.js";
-import schoolRepository from "../../schools/repositories/school.repository.js";
 import companyRepository from "../../companies/repositories/company.repository.js";
 import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
 import { AppError, ForbiddenError, ConflictError, NotFoundError } from "../../../core/errors/index.js";
@@ -14,14 +13,6 @@ class AttachmentService extends BaseService {
   }
 
   async getAll(filters = {}, requestingUser) {
-    if (requestingUser?.role === "school") {
-      const school = await schoolRepository.findByUserId(requestingUser.id);
-      if (school) {
-        const students = await studentRepository.findAll({ schoolId: school._id });
-        const studentIds = students.map((s) => s._id);
-        filters.studentId = { $in: studentIds };
-      }
-    }
     if (requestingUser?.role === "company") {
       const company = await companyRepository.findByUserId(requestingUser.id);
       if (company) filters.companyId = company._id;
