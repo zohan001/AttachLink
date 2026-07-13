@@ -4,6 +4,7 @@ import applicationRepository from "../../applications/repositories/application.r
 import studentRepository from "../../students/repositories/student.repository.js";
 import schoolRepository from "../../schools/repositories/school.repository.js";
 import companyRepository from "../../companies/repositories/company.repository.js";
+import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
 import { AppError, ForbiddenError, ConflictError, NotFoundError } from "../../../core/errors/index.js";
 import EventBus from "../../../core/events/EventBus.js";
 
@@ -24,6 +25,15 @@ class AttachmentService extends BaseService {
     if (requestingUser?.role === "company") {
       const company = await companyRepository.findByUserId(requestingUser.id);
       if (company) filters.companyId = company._id;
+    }
+    if (requestingUser?.role === "supervisor") {
+      const supervisor = await supervisorRepository.findByUserId(requestingUser.id);
+      if (supervisor) {
+        filters.$or = [
+          { academicSupervisorId: supervisor._id },
+          { industrialSupervisorId: supervisor._id },
+        ];
+      }
     }
     return await this.repository.findAll(filters);
   }
