@@ -38,7 +38,7 @@ export default function ReportList() {
 
   const { data: attachments } = useQuery({
     queryKey: ["attachments"],
-    queryFn: () => getAttachments({}).then((r) => r.data?.items || r.data || []),
+    queryFn: () => getAttachments({}).then((r) => Array.isArray(r) ? r : r.data?.items || r.data || []),
     enabled: type === "attachment",
   });
 

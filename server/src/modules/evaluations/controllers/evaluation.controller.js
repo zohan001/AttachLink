@@ -14,7 +14,7 @@ class EvaluationController {
 
   async getMy(req, res, next) {
     try {
-      const evaluations = await evaluationService.getMy(req.user.id);
+      const evaluations = await evaluationService.getMy(req.user.id, req.user.role);
 
       return responseBuilder.success(res, evaluations, "Evaluations retrieved successfully.");
     } catch (error) {

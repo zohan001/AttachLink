@@ -2,6 +2,7 @@ import evaluationRepository from "../repositories/evaluation.repository.js";
 import attachmentRepository from "../../attachments/repositories/attachment.repository.js";
 import supervisorRepository from "../../supervisors/repositories/supervisor.repository.js";
 import studentRepository from "../../students/repositories/student.repository.js";
+import schoolRepository from "../../schools/repositories/school.repository.js";
 import notificationService from "../../notifications/services/notification.service.js";
 import BaseService from "../../../core/services/BaseService.js";
 import {
@@ -67,7 +68,7 @@ class EvaluationService extends BaseService {
     return evaluation;
   }
 
-  async getMy(userId) {
+  async getMy(userId, role) {
     const supervisor = await supervisorRepository.findByUserId(userId);
     if (supervisor) {
       return await this.repository.findAllBy("evaluatorId", supervisor._id);
@@ -76,6 +77,15 @@ class EvaluationService extends BaseService {
     const student = await studentRepository.findByUserId(userId);
     if (student) {
       return await this.repository.findAllBy("studentId", student._id);
+    }
+
+    if (role === "school") {
+      const school = await schoolRepository.findByUserId(userId);
+      if (!school) return [];
+      const students = await studentRepository.findAll({ schoolId: school._id });
+      const studentIds = students.map((s) => s._id);
+      if (studentIds.length === 0) return [];
+      return await this.repository.findAllBy("studentId", { $in: studentIds });
     }
 
     return [];
