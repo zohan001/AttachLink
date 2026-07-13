@@ -32,7 +32,7 @@ export default function StudentProfile() {
 
   const { data: schoolsData } = useQuery({
     queryKey: ["schools"],
-    queryFn: () => getSchools().then((r) => r.data || r || []),
+    queryFn: () => getSchools({}).then((r) => r.data || []),
   });
   const schools = Array.isArray(schoolsData) ? schoolsData : [];
 
