@@ -158,7 +158,7 @@ class DashboardService {
 
     const [students, supervisors, active, evaluations, notifications] =
       await Promise.all([
-        Student.countDocuments({ schoolId: school._id }),
+        Student.countDocuments(),
         Supervisor.countDocuments({ schoolId: school._id }),
         Attachment.countDocuments({ status: "Active" }),
         Evaluation.countDocuments({ status: "Submitted" }),
@@ -167,15 +167,6 @@ class DashboardService {
           .limit(5)
           .lean(),
       ]);
-
-    const schoolStudentIds = (
-      await Student.find({ schoolId: school._id }).select("_id").lean()
-    ).map((s) => s._id);
-
-    const schoolEvaluations = await Evaluation.countDocuments({
-      status: "Submitted",
-      studentId: { $in: schoolStudentIds },
-    });
 
     return {
       school: {
@@ -187,7 +178,7 @@ class DashboardService {
       registeredStudents: students,
       supervisors,
       activeAttachments: active,
-      pendingEvaluations: schoolEvaluations,
+      pendingEvaluations: evaluations,
       recentNotifications: notifications,
     };
   }
