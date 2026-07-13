@@ -18,7 +18,7 @@ import {
   rejectLogbook,
   commentLogbook,
 } from "../../api/logbooks";
-import { getMyAttachments } from "../../api/attachments";
+import { getMyAttachments, getAttachments } from "../../api/attachments";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
 import StatusBadge from "../../components/common/StatusBadge";
@@ -50,9 +50,9 @@ export default function LogbookList() {
   });
 
   const { data: attachments } = useQuery({
-    queryKey: ["my-attachments"],
-    queryFn: getMyAttachments,
-    enabled: !attachId && user?.role === "student",
+    queryKey: ["attachments", user?.role === "supervisor" ? "all" : "my"],
+    queryFn: user?.role === "supervisor" ? () => getAttachments({}) : getMyAttachments,
+    enabled: !attachId && (user?.role === "student" || user?.role === "supervisor"),
   });
 
   const list = Array.isArray(items) ? items : [];
@@ -119,9 +119,11 @@ export default function LogbookList() {
         }
       />
 
-      {!attachId && user?.role === "student" && attachments?.length > 0 && (
+      {!attachId && (user?.role === "student" || user?.role === "supervisor") && attachments?.length > 0 && (
         <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-          <p className="text-sm text-indigo-700 font-medium mb-2">Select an attachment to add logbook entries:</p>
+          <p className="text-sm text-indigo-700 font-medium mb-2">
+            {user?.role === "supervisor" ? "Select an attachment to view logbooks:" : "Select an attachment to add logbook entries:"}
+          </p>
           <div className="flex flex-wrap gap-2">
             {attachments.map((att) => (
               <Link key={att._id} to={`/attachments/${att._id}/logbooks`}

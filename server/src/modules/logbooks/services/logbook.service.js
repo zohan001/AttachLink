@@ -46,8 +46,27 @@ class LogbookService extends BaseService {
     });
   }
 
-  async getMy(studentUserId) {
-    const student = await studentRepository.findByUserId(studentUserId);
+  async getMy(userId, role) {
+    if (role === "supervisor") {
+      const supervisor = await supervisorRepository.findByUserId(userId);
+      if (!supervisor) {
+        throw new NotFoundError("Supervisor profile not found");
+      }
+
+      const attachments = await attachmentRepository.findAll({
+        $or: [
+          { academicSupervisorId: supervisor._id },
+          { industrialSupervisorId: supervisor._id },
+        ],
+      });
+
+      const attachmentIds = attachments.map((a) => a._id);
+      if (attachmentIds.length === 0) return [];
+
+      return await this.repository.findAllBy("attachmentId", { $in: attachmentIds });
+    }
+
+    const student = await studentRepository.findByUserId(userId);
     if (!student) {
       throw new NotFoundError("Student profile not found");
     }
@@ -121,6 +140,17 @@ class LogbookService extends BaseService {
       throw new AppError("Only submitted entries can be approved", 400);
     }
 
+    const attachment = await attachmentRepository.findById(
+      logbook.attachmentId._id || logbook.attachmentId
+    );
+    if (
+      attachment &&
+      attachment.academicSupervisorId?._id?.toString() !== supervisor._id.toString() &&
+      attachment.industrialSupervisorId?._id?.toString() !== supervisor._id.toString()
+    ) {
+      throw new ForbiddenError("You are not assigned as a supervisor for this attachment");
+    }
+
     const updated = await this.repository.update(id, {
       status: "Approved",
       approvedAt: new Date(),
@@ -136,6 +166,19 @@ class LogbookService extends BaseService {
     return updated;
   }
 
+  async _verifySupervisorAssignment(logbook, supervisor) {
+    const attachment = await attachmentRepository.findById(
+      logbook.attachmentId._id || logbook.attachmentId
+    );
+    if (
+      attachment &&
+      attachment.academicSupervisorId?._id?.toString() !== supervisor._id.toString() &&
+      attachment.industrialSupervisorId?._id?.toString() !== supervisor._id.toString()
+    ) {
+      throw new ForbiddenError("You are not assigned as a supervisor for this attachment");
+    }
+  }
+
   async reject(id, supervisorUserId, comment = "") {
     const logbook = await this.getById(id);
     const supervisor = await supervisorRepository.findByUserId(supervisorUserId);
@@ -147,6 +190,8 @@ class LogbookService extends BaseService {
     if (logbook.status !== "Submitted") {
       throw new AppError("Only submitted entries can be rejected", 400);
     }
+
+    await this._verifySupervisorAssignment(logbook, supervisor);
 
     return await this.repository.update(id, {
       status: "Rejected",
@@ -161,6 +206,8 @@ class LogbookService extends BaseService {
     if (!supervisor) {
       throw new ForbiddenError("Supervisor profile not found");
     }
+
+    await this._verifySupervisorAssignment(logbook, supervisor);
 
     return await this.repository.update(id, {
       supervisorComment: comment,

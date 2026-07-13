@@ -40,7 +40,7 @@ const router = Router();
 router.get(
   "/my",
   authMiddleware,
-  roleMiddleware("student"),
+  roleMiddleware("student", "supervisor"),
   logbookController.getMy
 );
 

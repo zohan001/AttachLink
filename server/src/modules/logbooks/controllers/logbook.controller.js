@@ -14,7 +14,7 @@ class LogbookController {
 
   async getMy(req, res, next) {
     try {
-      const logbooks = await logbookService.getMy(req.user.id);
+      const logbooks = await logbookService.getMy(req.user.id, req.user.role);
 
       return responseBuilder.success(res, logbooks, "Logbook entries retrieved successfully.");
     } catch (error) {
