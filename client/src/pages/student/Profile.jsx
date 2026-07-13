@@ -5,6 +5,7 @@ import { z } from "zod";
 import toast from "react-hot-toast";
 import { handleApiError } from "../../utils/errorHandler";
 import api from "../../api/client";
+import { getSchools } from "../../api/schools";
 import PageHeader from "../../components/common/PageHeader";
 import Loading from "../../components/common/Loading";
 import UploadField from "../../components/common/UploadField";
@@ -18,6 +19,7 @@ const schema = z.object({
   gender: z.enum(["male", "female", "other"]),
   dateOfBirth: z.string().min(1, "Required"),
   nationalId: z.string().min(1, "Required"),
+  schoolId: z.string().min(1, "Select your school"),
 });
 
 export default function StudentProfile() {
@@ -27,6 +29,12 @@ export default function StudentProfile() {
     queryFn: () => api.get("/students/me").then((r) => r.data.data),
     retry: false,
   });
+
+  const { data: schoolsData } = useQuery({
+    queryKey: ["schools"],
+    queryFn: () => getSchools().then((r) => r.data || r || []),
+  });
+  const schools = Array.isArray(schoolsData) ? schoolsData : [];
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -39,6 +47,7 @@ export default function StudentProfile() {
       gender: profile.gender || "male",
       dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.slice(0, 10) : "",
       nationalId: profile.nationalId || "",
+      schoolId: profile.schoolId?._id || profile.schoolId || "",
     } : undefined,
   });
 
@@ -100,6 +109,14 @@ export default function StudentProfile() {
             </FormField>
             <FormField label="National ID" error={errors.nationalId}>
               <input type="text" {...register("nationalId")} className="input" />
+            </FormField>
+            <FormField label="School" error={errors.schoolId}>
+              <select {...register("schoolId")} className="input">
+                <option value="">Select school...</option>
+                {schools.map((s) => (
+                  <option key={s._id} value={s._id}>{s.schoolName}</option>
+                ))}
+              </select>
             </FormField>
           </div>
 

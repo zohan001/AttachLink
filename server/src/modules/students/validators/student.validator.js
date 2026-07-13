@@ -37,6 +37,11 @@ export const createStudentValidator = [
     .trim()
     .notEmpty()
     .withMessage("National ID is required"),
+
+  body("schoolId")
+    .trim()
+    .notEmpty()
+    .withMessage("School is required"),
 ];
 
 export const updateStudentValidator = [

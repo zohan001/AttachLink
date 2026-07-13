@@ -80,7 +80,12 @@ class EvaluationService extends BaseService {
     }
 
     if (role === "school") {
-      return await this.repository.findAll({});
+      const school = await schoolRepository.findByUserId(userId);
+      if (!school) return [];
+      const students = await studentRepository.findAll({ schoolId: school._id });
+      const studentIds = students.map((s) => s._id);
+      if (studentIds.length === 0) return [];
+      return await this.repository.findAllBy("studentId", { $in: studentIds });
     }
 
     return [];
