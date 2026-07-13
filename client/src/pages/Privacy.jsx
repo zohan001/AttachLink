@@ -44,7 +44,9 @@ export default function Privacy() {
           </Section>
 
           <Section title="Contact">
-            For privacy-related inquiries, contact the platform administrator.
+            For privacy-related inquiries, contact us at:
+            <br />Email: <a href="mailto:kabulmatano027@gmail.com" className="text-indigo-600 hover:underline">kabulmatano027@gmail.com</a>
+            <br />Phone: <a href="tel:+254745756470" className="text-indigo-600 hover:underline">+254745756470</a>
           </Section>
         </div>
       </div>
