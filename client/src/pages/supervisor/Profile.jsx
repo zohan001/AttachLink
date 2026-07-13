@@ -50,10 +50,14 @@ export default function SupervisorProfile() {
   const supType = watch("supervisorType");
 
   const mutation = useMutation({
-    mutationFn: (data) =>
-      profile?._id
-        ? api.put(`/supervisors/${profile._id}`, data)
-        : api.post("/supervisors", data),
+    mutationFn: (data) => {
+      const clean = Object.fromEntries(
+        Object.entries(data).filter(([, v]) => v !== "")
+      );
+      return profile?._id
+        ? api.put(`/supervisors/${profile._id}`, clean)
+        : api.post("/supervisors", clean);
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["my-supervisor-profile"] });
       toast.success(profile?._id ? "Profile updated" : "Profile created");
